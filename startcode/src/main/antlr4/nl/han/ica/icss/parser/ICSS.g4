@@ -42,14 +42,20 @@ MUL: '*';
 ASSIGNMENT_OPERATOR: ':=';
 
 
-
 //--- PARSER: ---
 stylesheet: EOF;
 
+
+//p{background-color: #ffffff; } WERKT (lvl 0)
 cssRule : LOWER_IDENT OPEN_BRACE declaration+ CLOSE_BRACE EOF;
 declaration: property COLON value SEMICOLON;
 property: 'background-color' | 'width' | 'color';
-value: COLOR | PIXELSIZE | PERCENTAGE;
+value: COLOR | PIXELSIZE | PERCENTAGE | boolean  | CAPITAL_IDENT;
+boolean: TRUE | FALSE;
+variable: CAPITAL_IDENT ASSIGNMENT_OPERATOR value SEMICOLON;
+
+
+
 
 //SELECTOR:  'p' | 'a' OPEN_BRACE DECLARATIONS CLOSE_BRACE;
 //DECLARATIONS: DECLARATION+;
