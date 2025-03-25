@@ -41,11 +41,17 @@ MIN: '-';
 MUL: '*';
 ASSIGNMENT_OPERATOR: ':=';
 
-SELECTOR:  'p' | 'a' OPEN_BRACE DECLARATIONS CLOSE_BRACE;
-DECLARATIONS: DECLARATION+;
-DECLARATION: 'background-color' | 'width' | 'color' COLON COLOR | PIXELSIZE | PERCENTAGE SEMICOLON CLOSE_BRACE;
 
 
 //--- PARSER: ---
 stylesheet: EOF;
+
+cssRule : LOWER_IDENT OPEN_BRACE declaration+ CLOSE_BRACE EOF;
+declaration: property COLON value SEMICOLON;
+property: 'background-color' | 'width' | 'color';
+value: COLOR | PIXELSIZE | PERCENTAGE;
+
+//SELECTOR:  'p' | 'a' OPEN_BRACE DECLARATIONS CLOSE_BRACE;
+//DECLARATIONS: DECLARATION+;
+//DECLARATION: 'background-color' | 'width' | 'color' COLON COLOR | PIXELSIZE | PERCENTAGE SEMICOLON CLOSE_BRACE;
 
