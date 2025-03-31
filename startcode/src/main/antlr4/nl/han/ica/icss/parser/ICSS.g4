@@ -47,7 +47,8 @@ stylesheet: EOF;
 
 
 //p{background-color: #ffffff; } WERKT (lvl 0)
-cssRules : cssRule+;
+cssRules : lineType+;
+lineType: cssRule+ | variable+;
 cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
 selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
 declaration: property COLON value SEMICOLON;
