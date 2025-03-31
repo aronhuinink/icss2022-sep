@@ -53,7 +53,10 @@ cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
 selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
 declaration: property COLON value SEMICOLON;
 property: 'background-color' | 'width' | 'color';
-value: COLOR | PIXELSIZE | PERCENTAGE | boolean  | CAPITAL_IDENT;
+value: datatype | ((datatype arithmeticOperator)+ datatype);
+arithmeticOperator: PLUS | MIN | MUL;
+datatype: COLOR | PIXELSIZE | PERCENTAGE | boolean  | CAPITAL_IDENT | integer;
+integer: '-'? SCALAR+;
 boolean: TRUE | FALSE;
 variable: CAPITAL_IDENT ASSIGNMENT_OPERATOR value SEMICOLON;
 
