@@ -47,7 +47,9 @@ stylesheet: EOF;
 
 
 //p{background-color: #ffffff; } WERKT (lvl 0)
-cssRule : LOWER_IDENT OPEN_BRACE declaration+ CLOSE_BRACE EOF;
+cssRules : cssRule+;
+cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
+selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
 declaration: property COLON value SEMICOLON;
 property: 'background-color' | 'width' | 'color';
 value: COLOR | PIXELSIZE | PERCENTAGE | boolean  | CAPITAL_IDENT;
