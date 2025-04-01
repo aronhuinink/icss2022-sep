@@ -21,7 +21,7 @@ public class Checker {
     private void checkStylesheet(Stylesheet root) {
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
-            if(child instanceof VariableReference) {
+            if(child instanceof VariableReference) {//wordt schijnbaar magisch herkent?
                 checkVariableReference((VariableReference) child);
             }
         }
@@ -30,7 +30,7 @@ public class Checker {
     private void checkVariableReference(VariableReference node) {
         String variableName = node.name;
         for(int i = 0; i < variableTypes.getSize(); i++){
-            if(variableTypes.containsKey(variableName)){
+            if(variableTypes.doesKeyExist(variableName)){
 
             }
 

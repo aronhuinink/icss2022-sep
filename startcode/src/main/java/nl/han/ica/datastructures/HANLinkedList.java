@@ -4,6 +4,10 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
     private Node<T> head;
     private int size;
 
+    public boolean doesKeyExist(String variableName) {
+        
+    }
+
     private static class Node<T> {
         T data;
         Node<T> next;
