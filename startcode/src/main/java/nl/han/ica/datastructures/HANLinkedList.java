@@ -1,51 +1,104 @@
 package nl.han.ica.datastructures;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 
-public class HANLinkedList implements IHANLinkedList{
+public class HANLinkedList<T> implements IHANLinkedList<T> {
+    private Node<T> head;
+    private int size;
 
-    List linkedList = new LinkedList();
+    private static class Node<T> {
+        T data;
+        Node<T> next;
+
+        Node(T data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    public HANLinkedList() {
+        this.head = null;
+        this.size = 0;
+    }
 
     @Override
-    public void addFirst(Object value) {
-        linkedList.add(0, value);
+    public void addFirst(T value) {
+        Node<T> newNode = new Node<>(value);
+        newNode.next = head;
+        head = newNode;
+        size++;
     }
 
     @Override
     public void clear() {
-        linkedList.clear();
+        head = null;
+        size = 0;
     }
 
     @Override
-    public void insert(int index, Object value) {
-        linkedList.add(index, value);
+    public void insert(int index, T value) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index out of bounds");
+        }
+        if (index == 0) {
+            addFirst(value);
+            return;
+        }
+        Node<T> newNode = new Node<>(value);
+        Node<T> current = head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current.next;
+        }
+        newNode.next = current.next;
+        current.next = newNode;
+        size++;
     }
 
     @Override
     public void delete(int pos) {
-        linkedList.remove(pos);
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Position out of bounds");
+        }
+        if (pos == 0) {
+            removeFirst();
+            return;
+        }
+        Node<T> current = head;
+        for (int i = 0; i < pos - 1; i++) {
+            current = current.next;
+        }
+        current.next = current.next.next;
+        size--;
     }
 
     @Override
-    public Object get(int pos) {
-        return linkedList.get(pos);
+    public T get(int pos) {
+        if (pos < 0 || pos >= size) {
+            throw new IndexOutOfBoundsException("Position out of bounds");
+        }
+        Node<T> current = head;
+        for (int i = 0; i < pos; i++) {
+            current = current.next;
+        }
+        return current.data;
     }
 
     @Override
     public void removeFirst() {
-        linkedList.remove(0);
+        if (head != null) {
+            head = head.next;
+            size--;
+        }
     }
 
     @Override
-    public Object getFirst() {
-        return linkedList.get(0);
+    public T getFirst() {
+        if (head == null) {
+            throw new IllegalStateException("List is empty");
+        }
+        return head.data;
     }
 
     @Override
     public int getSize() {
-        return linkedList.size();
+        return size;
     }
-
 }
-
