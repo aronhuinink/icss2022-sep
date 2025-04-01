@@ -14,18 +14,27 @@ public class Checker {
     private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;
 
     public void check(AST ast) {
-        variableTypes = new HANLinkedList();
+        variableTypes = new HANLinkedList<>();
         checkStylesheet(ast.root);
     }
 
     private void checkStylesheet(Stylesheet root) {
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
-            if(child instanceof Stylesheet) {}
+            if(child instanceof VariableReference) {
+                checkVariableReference((VariableReference) child);
+            }
         }
     }
 
-    private void checkVariableAssignment(VariableAssignment child) {
+    private void checkVariableReference(VariableReference node) {
+        String variableName = node.name;
+        for(int i = 0; i < variableTypes.getSize(); i++){
+            if(variableTypes.containsKey(variableName)){
+
+            }
+
+        }
     }
 
 
