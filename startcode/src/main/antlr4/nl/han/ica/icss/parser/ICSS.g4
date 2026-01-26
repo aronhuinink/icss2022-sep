@@ -37,13 +37,13 @@ CLOSE_BRACE: '}';
 SEMICOLON: ';';
 COLON: ':';
 PLUS: '+';
-MIN: '-';
+MIN: '-'; //BUGGED
 MUL: '*';
 ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: EOF;
+stylesheet: cssRules? EOF;
 
 
 //p{background-color: #ffffff; } WERKT (lvl 0)
@@ -52,19 +52,19 @@ lineType: cssRule+ | variable+;
 cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
 selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
 declaration: (property COLON value SEMICOLON) | ifStatement;
-ifStatement: IF BOX_BRACKET_OPEN (boolean | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE (ELSE OPEN_BRACE declaration+ CLOSE_BRACE)?;
+ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE (ELSE OPEN_BRACE declaration+ CLOSE_BRACE)?;
 property: LOWER_IDENT;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
-arithmeticOperator: PLUS | MIN | MUL;
-datatype: COLOR | PIXELSIZE | PERCENTAGE | boolean  | CAPITAL_IDENT | integer;
-integer: '-'? SCALAR+;
-boolean: TRUE | FALSE;
+arithmeticOperator: PLUS | MUL;
+datatype: COLOR | PIXELSIZE | PERCENTAGE | boolLiteral  | CAPITAL_IDENT | integer;
+integer: MIN? SCALAR;
+boolLiteral: TRUE | FALSE;
 variable: CAPITAL_IDENT ASSIGNMENT_OPERATOR value SEMICOLON;
 
 
 
 
-//SELECTOR:  'p' | 'a' OPEN_BRACE DECLARATIONS CLOSE_BRACE;
-//DECLARATIONS: DECLARATION+;
-//DECLARATION: 'background-color' | 'width' | 'color' COLON COLOR | PIXELSIZE | PERCENTAGE SEMICOLON CLOSE_BRACE;
+SELECTOR:  'p' | 'a' OPEN_BRACE DECLARATIONS CLOSE_BRACE;
+DECLARATIONS: DECLARATION+;
+DECLARATION: 'background-color' | 'width' | 'color' COLON COLOR | PIXELSIZE | PERCENTAGE SEMICOLON CLOSE_BRACE;
 
