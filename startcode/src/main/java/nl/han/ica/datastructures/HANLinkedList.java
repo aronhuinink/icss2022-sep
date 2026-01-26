@@ -5,7 +5,7 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
     private int size;
 
     public boolean doesKeyExist(String variableName) {
-        
+        return true;
     }
 
     private static class Node<T> {
