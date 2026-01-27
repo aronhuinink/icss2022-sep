@@ -1,33 +1,31 @@
 package nl.han.ica.datastructures;
 
-public class HANStack<T> implements IHANStack<T> {
-    private HANLinkedList stack;
+import java.util.NoSuchElementException;
 
-    public HANStack() {
-        this.stack = new HANLinkedList();
-    }
+public class HANStack<T> implements IHANStack<T> {
+
+    private final IHANLinkedList<T> list = new HANLinkedList<>();
 
     @Override
     public void push(T value) {
-        stack.addFirst(value);
+        list.addFirst(value);
     }
 
     @Override
     public T pop() {
-        if (stack.getSize() == 0) {
-            throw new IllegalStateException("Stack is empty");
+        if (list.getSize() == 0) {
+            throw new NoSuchElementException("Stack is empty");
         }
-        T value = (T) stack.getFirst();
-        stack.removeFirst();
-        return value;
+        T top = list.getFirst();
+        list.removeFirst();
+        return top;
     }
 
     @Override
     public T peek() {
-        if (stack.getSize() == 0) {
-            throw new IllegalStateException("Stack is empty");
+        if (list.getSize() == 0) {
+            throw new NoSuchElementException("Stack is empty");
         }
-        return (T) stack.getFirst();
+        return list.getFirst();
     }
 }
-
