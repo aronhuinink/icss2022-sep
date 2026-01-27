@@ -1,128 +1,114 @@
 package nl.han.ica.datastructures;
 
-import nl.han.ica.datastructures.IHANLinkedList;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 public class HANLinkedList<T> implements IHANLinkedList<T> {
+    Node<T> front;
+    Node<T> back;
 
-    private static final class Node<T> {
-        T value;
+    private class Node<T> {
+        T element;
         Node<T> next;
-        Node(T value, Node<T> next) {
-            this.value = value;
-            this.next = next;
-        }
     }
-
-    // Header/sentinel node (telt NIET mee voor size)
-    private final Node<T> header = new Node<>(null, null);
-    private int size = 0;
 
     @Override
     public void addFirst(T value) {
-        header.next = new Node<>(value, header.next);
-        size++;
+        Node<T> newNode = new Node<>();
+        newNode.element = value;
+        newNode.next = back;
+        if (front != null) {
+            newNode.next = front;
+            if (back == null) {
+                back = front;
+            }
+
+        }
+        front = newNode;
     }
 
     @Override
     public void clear() {
-        header.next = null;
-        size = 0;
+        Node<T> current = front;
+        while (current != null) {
+            Node<T> next = current.next;
+            current.next = null;
+            current = next;
+        }
     }
 
     @Override
     public void insert(int index, T value) {
-        checkInsertIndex(index); // mag ook op size (append)
-        Node<T> prev = nodeBefore(index);
-        prev.next = new Node<>(value, prev.next);
-        size++;
+        Node<T> newNode = new Node<>();
+        newNode.element = value;
+        Node<T> current = front;
+
+        try {
+            for (int i = 0; i < index; i++) {
+                current = current.next;
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Index out of bounds");
+        }
+
+        newNode.next = current.next;
+        current.next = newNode;
     }
 
     @Override
     public void delete(int pos) {
-        checkElementIndex(pos);
-        Node<T> prev = nodeBefore(pos);
-        prev.next = prev.next.next;
-        size--;
+        Node<T> current = front;
+
+        try {
+            for (int i = 0; i < pos; i++) {
+                current = current.next;
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Position out of bounds");
+        }
+
+        current.next.element = null;
+        current.next = current.next.next;
     }
 
     @Override
     public T get(int pos) {
-        checkElementIndex(pos);
-        return nodeAt(pos).value;
+        Node<T> current = front;
+
+        try {
+            for (int i = 0; i < pos; i++) {
+                current = current.next;
+            }
+        } catch (NullPointerException e) {
+            System.out.println("Position out of bounds");
+        }
+
+        return current.element;
     }
 
     @Override
     public void removeFirst() {
-        if (size == 0) {
-            throw new NoSuchElementException("List is empty");
+        if (front == null) {
+            return;
         }
-        header.next = header.next.next;
-        size--;
+        front.element = null;
+        front = front.next;
     }
 
     @Override
     public T getFirst() {
-        if (size == 0) {
-            throw new NoSuchElementException("List is empty");
-        }
-        return header.next.value;
+        return this.front.element;
     }
 
     @Override
     public int getSize() {
+        if (front == null) {
+            return 0;
+        }
+        int size = 0;
+        Node<T> current = front;
+        while (front.next != null) {
+            current = current.next;
+            size++;
+        }
+
         return size;
-    }
-
-    @Override
-    public Iterator<T> iterator() {
-        return new Iterator<>() {
-            private Node<T> current = header.next;
-
-            @Override
-            public boolean hasNext() {
-                return current != null;
-            }
-
-            @Override
-            public T next() {
-                if (current == null) throw new NoSuchElementException();
-                T v = current.value;
-                current = current.next;
-                return v;
-            }
-        };
-    }
-
-    // Helpers
-
-    private void checkElementIndex(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    private void checkInsertIndex(int index) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("index=" + index + ", size=" + size);
-        }
-    }
-
-    private Node<T> nodeBefore(int index) {
-        // index==0 => header
-        Node<T> prev = header;
-        for (int i = 0; i < index; i++) {
-            prev = prev.next;
-        }
-        return prev;
-    }
-
-    private Node<T> nodeAt(int index) {
-        Node<T> cur = header.next;
-        for (int i = 0; i < index; i++) {
-            cur = cur.next;
-        }
-        return cur;
     }
 }

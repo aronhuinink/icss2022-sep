@@ -1,13 +1,10 @@
 package nl.han.ica.datastructures;
 
-import java.util.NoSuchElementException;
-import nl.han.ica.datastructures.IHANLinkedList;
-import nl.han.ica.datastructures.HANLinkedList;
-import nl.han.ica.datastructures.IHANStack;
+import java.util.LinkedList;
 
 public class HANStack<T> implements IHANStack<T> {
 
-    private final IHANLinkedList<T> list = new HANLinkedList<>();
+    LinkedList<T> list = new LinkedList<>();
 
     @Override
     public void push(T value) {
@@ -16,19 +13,13 @@ public class HANStack<T> implements IHANStack<T> {
 
     @Override
     public T pop() {
-        if (list.getSize() == 0) {
-            throw new NoSuchElementException("Stack is empty");
-        }
-        T top = list.getFirst();
+        T first = list.getFirst();
         list.removeFirst();
-        return top;
+        return first;
     }
 
     @Override
     public T peek() {
-        if (list.getSize() == 0) {
-            throw new NoSuchElementException("Stack is empty");
-        }
-        return list.getFirst();
+        return list.peekFirst();
     }
 }
