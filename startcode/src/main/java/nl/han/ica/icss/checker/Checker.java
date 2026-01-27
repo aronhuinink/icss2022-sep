@@ -15,7 +15,7 @@ public class Checker {
 
     public void check(AST ast) {
         variableTypes = new HANLinkedList<>();
-        checkStylesheet(ast.root);
+        //checkStylesheet(ast.root);
     }
 
     private void checkStylesheet(Stylesheet root) {
@@ -30,9 +30,6 @@ public class Checker {
     private void checkVariableReference(VariableReference node) {
         String variableName = node.name;
         for(int i = 0; i < variableTypes.getSize(); i++){
-            if(variableTypes.doesKeyExist(variableName)){
-
-            }
 
         }
     }
