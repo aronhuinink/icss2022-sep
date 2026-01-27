@@ -35,10 +35,12 @@ public class ASTListener extends ICSSBaseListener {
         return ast;
     }
 
-//	@Override
-//	public void enterStylesheet(ICSSParser.StylesheetContext ctx) {
-//		currentContainer.push(new Stylesheet());
-//		super.enterStylesheet(ctx);
-//	}
+	//https://chatgpt.com/c/6978b50e-1280-832f-82e2-669993932a8f
+	//Uitleg
+
+	@Override
+	public void EnterStyleSheet(){
+
+	}
     
 }
