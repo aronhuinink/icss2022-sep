@@ -32,10 +32,10 @@ public class ASTListener extends ICSSBaseListener {
         return ast;
     }
 
-	@Override
-	public void enterStylesheet(ICSSParser.StylesheetContext ctx) {
-		currentContainer.push(new Stylesheet());
-		super.enterStylesheet(ctx);
-	}
+//	@Override
+//	public void enterStylesheet(ICSSParser.StylesheetContext ctx) {
+//		currentContainer.push(new Stylesheet());
+//		super.enterStylesheet(ctx);
+//	}
     
 }
