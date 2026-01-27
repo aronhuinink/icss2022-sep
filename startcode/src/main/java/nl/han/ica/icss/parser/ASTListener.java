@@ -1,4 +1,4 @@
-package main.java.nl.han.ica.icss.parser;
+package nl.han.ica.icss.parser;
 
 import java.util.Stack;
 import nl.han.ica.datastructures.IHANStack;
@@ -12,6 +12,9 @@ import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
 import nl.han.ica.icss.ast.Stylesheet;
+import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.*;
+
 
 /**
  * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
