@@ -1,6 +1,9 @@
 package nl.han.ica.datastructures;
 
 import java.util.NoSuchElementException;
+import nl.han.ica.datastructures.IHANLinkedList;
+import nl.han.ica.datastructures.HANLinkedList;
+import nl.han.ica.datastructures.IHANStack;
 
 public class HANStack<T> implements IHANStack<T> {
 

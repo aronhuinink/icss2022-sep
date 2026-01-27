@@ -1,5 +1,6 @@
 package nl.han.ica.datastructures;
 
+import nl.han.ica.datastructures.IHANLinkedList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
