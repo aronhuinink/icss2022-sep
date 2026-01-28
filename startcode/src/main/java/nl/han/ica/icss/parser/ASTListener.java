@@ -1,12 +1,10 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.datastructures.IHANStack;
-import nl.han.ica.icss.ast.AST;
-import nl.han.ica.icss.ast.ASTNode;
+import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.datastructures.HANStack;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.TerminalNode;
+
 
 /**
  * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
@@ -34,6 +32,8 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterStylesheet(ICSSParser.StylesheetContext ctx) {
 		System.out.println("enterStylesheet");
+		currentContainer.push(new Stylesheet());
+		super.enterStylesheet(ctx);
 	}
 
 	@Override
@@ -44,6 +44,9 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterCssRules(ICSSParser.CssRulesContext ctx) {
 		System.out.println("enterCssRules");
+		ASTNode current = currentContainer.pop();
+		currentContainer.peek().addChild(current);
+		super.enterCssRules(ctx);
 	}
 
 	@Override
