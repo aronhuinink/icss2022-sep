@@ -43,12 +43,10 @@ ASSIGNMENT_OPERATOR: ':=';
 
 
 //--- PARSER: ---
-stylesheet: cssRules? EOF;
+stylesheet: (cssRule | variable)+ EOF;
 
 
 //p{background-color: #ffffff; } WERKT (lvl 0)
-cssRules : lineType+;
-lineType: cssRule+ | variable+;
 cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
 selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
 declaration: (property COLON value SEMICOLON) | ifStatement;

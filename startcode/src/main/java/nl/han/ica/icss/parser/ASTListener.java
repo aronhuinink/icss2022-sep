@@ -58,19 +58,6 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitStylesheet(ctx);
 	}
 
-	@Override
-	public void enterLineType(ICSSParser.LineTypeContext ctx) {
-		System.out.println("enterLineType");
-		currentContainer.push(new Stylerule()); // TODO: namen aanpassen grammar
-		super.enterLineType(ctx);
-	}
-
-	@Override
-	public void exitLineType(ICSSParser.LineTypeContext ctx) {
-		System.out.println("exitLineType");
-		attachSafe("exitLineType");
-		super.exitLineType(ctx);
-	}
 
 	@Override
 	public void enterCssRule(ICSSParser.CssRuleContext ctx) {
@@ -225,4 +212,6 @@ public class ASTListener extends ICSSBaseListener {
 		attachSafe("exitVariable");
 		super.exitVariable(ctx);
 	}
+
+
 }
