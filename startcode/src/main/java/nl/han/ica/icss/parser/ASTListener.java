@@ -1,38 +1,48 @@
 package nl.han.ica.icss.parser;
 
 import nl.han.ica.datastructures.IHANStack;
+import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
-import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 
-
-/**
- * This class extracts the ICSS Abstract Syntax Tree from the Antlr Parse tree.
- */
-
-//wat dit vgm inhoudt: De structuur van de tree van wijzigen naar zoals die eruit ziet van de ast
-
-
 public class ASTListener extends ICSSBaseListener {
-	
-	//Accumulator attributes:
-	private AST ast;
 
-	//Use this to keep track of the parent nodes when recursively traversing the ast
+	private AST ast;
 	private IHANStack<ASTNode> currentContainer;
 
 	public ASTListener() {
 		ast = new AST();
 		currentContainer = new HANStack<>();
 	}
-    public AST getAST() {
-        return ast;
-    }
 
-	//https://chatgpt.com/c/6978b50e-1280-832f-82e2-669993932a8f
-	//Uitleg
+	public AST getAST() {
+		return ast;
+	}
 
+	/**
+	 * Pop current node and attach to parent (peek) safely.
+	 * Prevents null children, so the GUI won't crash on getChildren().
+	 */
+	private void attachSafe(String label) {
+		ASTNode child = currentContainer.pop();
+
+		if (child == null) {
+			System.out.println(label + " -> pop() was NULL (stack mismatch / missing push)");
+			return;
+		}
+
+		ASTNode parent = currentContainer.peek();
+		if (parent == null) {
+			System.out.println(label + " -> peek() was NULL (no parent)");
+			return;
+		}
+
+		parent.addChild(child);
+		System.out.println(label + " attach: "
+				+ parent.getClass().getSimpleName() + " <- "
+				+ child.getClass().getSimpleName());
+	}
 
 	@Override
 	public void enterStylesheet(ICSSParser.StylesheetContext ctx) {
@@ -43,180 +53,176 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void exitStylesheet(ICSSParser.StylesheetContext ctx) {
+		System.out.println("exitStylesheet");
 		ast.setRoot((Stylesheet) currentContainer.pop());
 		super.exitStylesheet(ctx);
-		System.out.println("exitStylesheet");
 	}
-
-//	@Override
-//	public void enterCssRules(ICSSParser.CssRulesContext ctx) {
-//		System.out.println("enterCssRules");
-//		currentContainer.push(new Stylerule());
-//		super.enterCssRules(ctx);
-//	}
-//
-//	@Override
-//	public void exitCssRules(ICSSParser.CssRulesContext ctx) {
-//		System.out.println("exitCssRules");
-//		ASTNode current = currentContainer.pop();
-//		currentContainer.peek().addChild(current);
-//	}
 
 	@Override
 	public void enterLineType(ICSSParser.LineTypeContext ctx) {
 		System.out.println("enterLineType");
-		currentContainer.push(new IfClause());//TODO: namen aanpassen grammar
+		currentContainer.push(new Stylerule()); // TODO: namen aanpassen grammar
+		super.enterLineType(ctx);
 	}
 
 	@Override
 	public void exitLineType(ICSSParser.LineTypeContext ctx) {
 		System.out.println("exitLineType");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitLineType");
+		super.exitLineType(ctx);
 	}
 
 	@Override
 	public void enterCssRule(ICSSParser.CssRuleContext ctx) {
 		System.out.println("enterCssRule");
 		currentContainer.push(new Stylerule());
+		super.enterCssRule(ctx);
 	}
 
 	@Override
 	public void exitCssRule(ICSSParser.CssRuleContext ctx) {
 		System.out.println("exitCssRule");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitCssRule");
+		super.exitCssRule(ctx);
 	}
 
 	@Override
 	public void enterSelector(ICSSParser.SelectorContext ctx) {
 		System.out.println("enterSelector");
 		currentContainer.push(new ClassSelector(ctx.getText()));
+		super.enterSelector(ctx);
 	}
 
 	@Override
 	public void exitSelector(ICSSParser.SelectorContext ctx) {
 		System.out.println("exitSelector");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitSelector");
+		super.exitSelector(ctx);
 	}
 
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("enterDeclaration");
 		currentContainer.push(new Declaration());
+		super.enterDeclaration(ctx);
 	}
 
 	@Override
 	public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("exitDeclaration");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitDeclaration");
+		super.exitDeclaration(ctx);
 	}
 
 	@Override
 	public void enterIfStatement(ICSSParser.IfStatementContext ctx) {
 		System.out.println("enterIfStatement");
-		currentContainer.push(new IfClause());
+		currentContainer.push(new Stylerule());
+		super.enterIfStatement(ctx);
 	}
 
 	@Override
 	public void exitIfStatement(ICSSParser.IfStatementContext ctx) {
 		System.out.println("exitIfStatement");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitIfStatement");
+		super.exitIfStatement(ctx);
 	}
 
 	@Override
 	public void enterProperty(ICSSParser.PropertyContext ctx) {
 		System.out.println("enterProperty");
-		currentContainer.push(new IfClause());
+		currentContainer.push(new Stylerule());
+		super.enterProperty(ctx);
 	}
 
 	@Override
 	public void exitProperty(ICSSParser.PropertyContext ctx) {
 		System.out.println("exitProperty");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitProperty");
+		super.exitProperty(ctx);
 	}
 
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
 		System.out.println("enterValue");
-		currentContainer.push(new IfClause());
+		currentContainer.push(new Stylerule());
+		super.enterValue(ctx);
 	}
 
 	@Override
 	public void exitValue(ICSSParser.ValueContext ctx) {
 		System.out.println("exitValue");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitValue");
+		super.exitValue(ctx);
 	}
 
 	@Override
 	public void enterArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("enterArithmeticOperator");
-		currentContainer.push(new IfClause());
+		currentContainer.push(new Stylerule());
+		super.enterArithmeticOperator(ctx);
 	}
 
 	@Override
 	public void exitArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("exitArithmeticOperator");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitArithmeticOperator");
+		super.exitArithmeticOperator(ctx);
 	}
 
 	@Override
 	public void enterDatatype(ICSSParser.DatatypeContext ctx) {
 		System.out.println("enterDatatype");
-		currentContainer.push(new IfClause());
+		currentContainer.push(new Stylerule());
+		super.enterDatatype(ctx);
 	}
 
 	@Override
 	public void exitDatatype(ICSSParser.DatatypeContext ctx) {
 		System.out.println("exitDatatype");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitDatatype");
+		super.exitDatatype(ctx);
 	}
 
 	@Override
 	public void enterInteger(ICSSParser.IntegerContext ctx) {
 		System.out.println("enterInteger");
 		currentContainer.push(new ScalarLiteral(ctx.getText()));
+		super.enterInteger(ctx);
 	}
 
 	@Override
 	public void exitInteger(ICSSParser.IntegerContext ctx) {
 		System.out.println("exitInteger");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitInteger");
+		super.exitInteger(ctx);
 	}
 
 	@Override
 	public void enterBoolLiteral(ICSSParser.BoolLiteralContext ctx) {
 		System.out.println("enterBoolLiteral");
 		currentContainer.push(new BoolLiteral(ctx.getText()));
+		super.enterBoolLiteral(ctx);
 	}
 
 	@Override
 	public void exitBoolLiteral(ICSSParser.BoolLiteralContext ctx) {
 		System.out.println("exitBoolLiteral");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitBoolLiteral");
+		super.exitBoolLiteral(ctx);
 	}
 
 	@Override
 	public void enterVariable(ICSSParser.VariableContext ctx) {
 		System.out.println("enterVariable");
 		currentContainer.push(new VariableReference(ctx.getText()));
+		super.enterVariable(ctx);
 	}
 
 	@Override
 	public void exitVariable(ICSSParser.VariableContext ctx) {
 		System.out.println("exitVariable");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
+		attachSafe("exitVariable");
+		super.exitVariable(ctx);
 	}
-
-
 }
