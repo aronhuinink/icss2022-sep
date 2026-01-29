@@ -43,22 +43,24 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void exitStylesheet(ICSSParser.StylesheetContext ctx) {
+		ast.setRoot((Stylesheet) currentContainer.pop());
+		super.exitStylesheet(ctx);
 		System.out.println("exitStylesheet");
 	}
 
-	@Override
-	public void enterCssRules(ICSSParser.CssRulesContext ctx) {
-		System.out.println("enterCssRules");
-		currentContainer.push(new Stylerule());
-		super.enterCssRules(ctx);
-	}
-
-	@Override
-	public void exitCssRules(ICSSParser.CssRulesContext ctx) {
-		System.out.println("exitCssRules");
-		ASTNode current = currentContainer.pop();
-		currentContainer.peek().addChild(current);
-	}
+//	@Override
+//	public void enterCssRules(ICSSParser.CssRulesContext ctx) {
+//		System.out.println("enterCssRules");
+//		currentContainer.push(new Stylerule());
+//		super.enterCssRules(ctx);
+//	}
+//
+//	@Override
+//	public void exitCssRules(ICSSParser.CssRulesContext ctx) {
+//		System.out.println("exitCssRules");
+//		ASTNode current = currentContainer.pop();
+//		currentContainer.peek().addChild(current);
+//	}
 
 	@Override
 	public void enterLineType(ICSSParser.LineTypeContext ctx) {
