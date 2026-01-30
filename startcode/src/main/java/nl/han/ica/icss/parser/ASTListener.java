@@ -130,7 +130,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
 		System.out.println("enterValue");
-		currentContainer.push(new Stylerule());
+		currentContainer.push(new VariableReference(ctx.getText()));
 		super.enterValue(ctx);
 	}
 
@@ -200,7 +200,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterVariable(ICSSParser.VariableContext ctx) {
 		System.out.println("enterVariable");
-		currentContainer.push(new VariableReference(ctx.getText()));
+		currentContainer.push(new VariableAssignment());
 		super.enterVariable(ctx);
 	}
 
