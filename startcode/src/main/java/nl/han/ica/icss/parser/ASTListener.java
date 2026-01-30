@@ -59,19 +59,19 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 
-	@Override
-	public void enterCssRule(ICSSParser.CssRuleContext ctx) {
-		System.out.println("enterCssRule");
-		currentContainer.push(new Stylerule());
-		super.enterCssRule(ctx);
-	}
-
-	@Override
-	public void exitCssRule(ICSSParser.CssRuleContext ctx) {
-		System.out.println("exitCssRule");
-		attachSafe("exitCssRule");
-		super.exitCssRule(ctx);
-	}
+//	@Override
+//	public void enterCssRule(ICSSParser.CssRuleContext ctx) {
+//		System.out.println("enterCssRule");
+//		//currentContainer.push(new Stylerule());
+//		super.enterCssRule(ctx);
+//	}
+//
+//	@Override
+//	public void exitCssRule(ICSSParser.CssRuleContext ctx) {
+//		System.out.println("exitCssRule");
+//		attachSafe("exitCssRule");
+//		super.exitCssRule(ctx);
+//	}
 
 	@Override
 	public void enterSelector(ICSSParser.SelectorContext ctx) {
