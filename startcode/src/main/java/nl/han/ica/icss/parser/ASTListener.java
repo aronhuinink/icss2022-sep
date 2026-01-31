@@ -102,7 +102,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterIfStatement(ICSSParser.IfStatementContext ctx) {
 		System.out.println("enterIfStatement");
-		currentContainer.push(new Stylerule());
+		currentContainer.push(new IfClause());
 		super.enterIfStatement(ctx);
 	}
 
@@ -112,6 +112,11 @@ public class ASTListener extends ICSSBaseListener {
 		attachSafe("exitIfStatement");
 		super.exitIfStatement(ctx);
 	}
+
+//	@Override
+//	public void enterElseClause(ICSSParser.ElseClauseContext ctx){
+//
+//	}
 
 	@Override
 	public void enterProperty(ICSSParser.PropertyContext ctx) {
