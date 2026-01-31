@@ -211,5 +211,56 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitVariable(ctx);
 	}
 
+	@Override public void enterColor(ICSSParser.ColorContext ctx) {
+		System.out.println("enterColor");
+		currentContainer.push(new ColorLiteral(ctx.getText()));
+		super.enterColor(ctx);
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitColor(ICSSParser.ColorContext ctx) {
+		System.out.println("exitColor");
+		attachSafe("exitColor");
+		super.exitColor(ctx);
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override
+	public void enterPixelSize(ICSSParser.PixelSizeContext ctx) {
+		currentContainer.push(new PixelLiteral(ctx.getText()));
+	}
+	@Override
+	public void exitPixelSize(ICSSParser.PixelSizeContext ctx) {
+		attachSafe("exitPixelSize");
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterPercentage(ICSSParser.PercentageContext ctx)
+	{
+		System.out.println("enterPercentage");
+		currentContainer.push(new PercentageLiteral(ctx.getText()));
+		super.enterPercentage(ctx);
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPercentage(ICSSParser.PercentageContext ctx) {
+		System.out.println("exitPercentage");
+		attachSafe("exitPercentage");
+		super.exitPercentage(ctx);
+	}
+
 
 }
+

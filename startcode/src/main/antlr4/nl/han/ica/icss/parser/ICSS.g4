@@ -54,9 +54,12 @@ ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX
 property: LOWER_IDENT;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
 arithmeticOperator: PLUS | MUL;
-datatype: COLOR | PIXELSIZE | PERCENTAGE | boolLiteral  | CAPITAL_IDENT | integer;
+datatype: color | pixelSize | percentage | boolLiteral  | CAPITAL_IDENT | integer;
 integer: MIN? SCALAR;
 boolLiteral: TRUE | FALSE;
+color: COLOR;
+pixelSize: PIXELSIZE;
+percentage: PERCENTAGE;
 variable: CAPITAL_IDENT ASSIGNMENT_OPERATOR value SEMICOLON;
 
 
