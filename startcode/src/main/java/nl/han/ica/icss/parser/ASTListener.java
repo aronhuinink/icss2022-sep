@@ -88,7 +88,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("enterDeclaration");
-		currentContainer.push(new Declaration());
+		currentContainer.push(new Stylerule());
 		super.enterDeclaration(ctx);
 	}
 
@@ -113,24 +113,31 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitIfStatement(ctx);
 	}
 
+	@Override public void enterElseClause(ICSSParser.ElseClauseContext ctx) {
+		System.out.println("enterElseClause");
+		currentContainer.push(new ElseClause());
+		super.enterElseClause(ctx);
+	}
+
+	@Override public void exitElseClause(ICSSParser.ElseClauseContext ctx) {
+		System.out.println("exitElseClause");
+		attachSafe("exitElseClause");
+		super.exitElseClause(ctx);
+	}
+
 //	@Override
-//	public void enterElseClause(ICSSParser.ElseClauseContext ctx){
-//
+//	public void enterProperty(ICSSParser.PropertyContext ctx) {
+//		System.out.println("enterProperty");
+//		currentContainer.push(new Stylerule());
+//		super.enterProperty(ctx);
 //	}
-
-	@Override
-	public void enterProperty(ICSSParser.PropertyContext ctx) {
-		System.out.println("enterProperty");
-		currentContainer.push(new Stylerule());
-		super.enterProperty(ctx);
-	}
-
-	@Override
-	public void exitProperty(ICSSParser.PropertyContext ctx) {
-		System.out.println("exitProperty");
-		attachSafe("exitProperty");
-		super.exitProperty(ctx);
-	}
+//
+//	@Override
+//	public void exitProperty(ICSSParser.PropertyContext ctx) {
+//		System.out.println("exitProperty");
+//		attachSafe("exitProperty");
+//		super.exitProperty(ctx);
+//	}
 
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
