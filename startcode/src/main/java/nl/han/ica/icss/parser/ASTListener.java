@@ -88,14 +88,12 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("enterDeclaration");
-		currentContainer.push(new Stylerule());
 		super.enterDeclaration(ctx);
 	}
-
 	@Override
 	public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("exitDeclaration");
-		attachSafe("exitDeclaration");
+		// NIET attachSafe hier als je geen declaration node pusht
 		super.exitDeclaration(ctx);
 	}
 
@@ -156,28 +154,22 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("enterArithmeticOperator");
-		currentContainer.push(new Stylerule());
 		super.enterArithmeticOperator(ctx);
 	}
-
 	@Override
 	public void exitArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("exitArithmeticOperator");
-		attachSafe("exitArithmeticOperator");
 		super.exitArithmeticOperator(ctx);
 	}
 
 	@Override
 	public void enterDatatype(ICSSParser.DatatypeContext ctx) {
 		System.out.println("enterDatatype");
-		currentContainer.push(new Stylerule());
 		super.enterDatatype(ctx);
 	}
-
 	@Override
 	public void exitDatatype(ICSSParser.DatatypeContext ctx) {
 		System.out.println("exitDatatype");
-		attachSafe("exitDatatype");
 		super.exitDatatype(ctx);
 	}
 
