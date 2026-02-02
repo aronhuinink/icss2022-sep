@@ -49,8 +49,9 @@ stylesheet: (cssRule | variable)+ EOF;
 //p{background-color: #ffffff; } WERKT (lvl 0)
 cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
 selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
-declaration: (LOWER_IDENT COLON value SEMICOLON) | ifStatement;
-ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE elseClause?;
+declaration: (LOWER_IDENT COLON value SEMICOLON) | statement;
+statement: ifStatement elseClause?;
+ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;
 elseClause: ELSE OPEN_BRACE declaration+ CLOSE_BRACE;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
 arithmeticOperator: PLUS | MUL;
