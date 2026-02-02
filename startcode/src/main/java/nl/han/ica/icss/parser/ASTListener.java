@@ -296,6 +296,19 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitPercentage(ctx);
 	}
 
+	@Override
+	public void enterVariableName(ICSSParser.VariableNameContext ctx) {
+		System.out.println("enterValue");
+		currentContainer.push(new VariableReference(ctx.getText()));
+		super.enterVariableName(ctx);
+	}
+
+	@Override
+	public void exitVariableName(ICSSParser.VariableNameContext ctx) {
+		System.out.println("exitValue");
+		attachSafe("exitValue");
+		super.exitVariableName(ctx);
+	}
 
 }
 

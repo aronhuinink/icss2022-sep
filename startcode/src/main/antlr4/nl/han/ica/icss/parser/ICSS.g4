@@ -64,7 +64,8 @@ boolLiteral: TRUE | FALSE;
 color: COLOR;
 pixelSize: PIXELSIZE;
 percentage: PERCENTAGE;
-variable: CAPITAL_IDENT ASSIGNMENT_OPERATOR value SEMICOLON;//declaration
+variable: variableName ASSIGNMENT_OPERATOR value SEMICOLON;//declaration
+variableName: CAPITAL_IDENT;
 
 
 
