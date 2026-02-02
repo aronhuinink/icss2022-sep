@@ -48,7 +48,10 @@ stylesheet: (cssRule | variable)+ EOF;
 
 //p{background-color: #ffffff; } WERKT (lvl 0)
 cssRule : selector OPEN_BRACE declaration+ CLOSE_BRACE;
-selector: CLASS_IDENT | ID_IDENT | LOWER_IDENT;
+selector: class_selector | id_selector | tag_selector;
+class_selector: CLASS_IDENT;
+id_selector: ID_IDENT;
+tag_selector: LOWER_IDENT;
 declaration: (LOWER_IDENT COLON value SEMICOLON) | statement;
 statement: ifStatement elseClause?;
 ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;

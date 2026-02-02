@@ -5,6 +5,8 @@ import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
+import nl.han.ica.icss.ast.selectors.IdSelector;
+import nl.han.ica.icss.ast.selectors.TagSelector;
 
 public class ASTListener extends ICSSBaseListener {
 
@@ -72,18 +74,47 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 	@Override
-	public void enterSelector(ICSSParser.SelectorContext ctx) {
-		System.out.println("enterSelector");
+	public void enterClass_selector(ICSSParser.Class_selectorContext ctx) {
+		System.out.println("enterClass_selector");
 		currentContainer.push(new ClassSelector(ctx.getText()));
-		super.enterSelector(ctx);
+		super.enterClass_selector(ctx);
 	}
 
 	@Override
-	public void exitSelector(ICSSParser.SelectorContext ctx) {
-		System.out.println("exitSelector");
-		attachSafe("exitSelector");
-		super.exitSelector(ctx);
+	public void exitClass_selector(ICSSParser.Class_selectorContext ctx) {
+		System.out.println("exitClass_selector");
+		attachSafe("exitClass_selector");
+		super.exitClass_selector(ctx);
 	}
+
+	@Override
+	public void enterId_selector(ICSSParser.Id_selectorContext ctx) {
+		System.out.println("enterId_selector");
+		currentContainer.push(new IdSelector(ctx.getText()));
+		super.enterId_selector(ctx);
+	}
+
+	@Override
+	public void exitId_selector(ICSSParser.Id_selectorContext ctx) {
+		System.out.println("exitId_selector");
+		attachSafe("exitId_selector");
+		super.exitId_selector(ctx);
+	}
+
+	@Override
+	public void enterTag_selector(ICSSParser.Tag_selectorContext ctx) {
+		System.out.println("enterTag_selector");
+		currentContainer.push(new TagSelector(ctx.getText()));
+		super.enterTag_selector(ctx);
+	}
+
+	@Override
+	public void exitTag_selector(ICSSParser.Tag_selectorContext ctx) {
+		System.out.println("exitTag_selector");
+		attachSafe("exitTag_selector");
+		super.exitTag_selector(ctx);
+	}
+
 
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
