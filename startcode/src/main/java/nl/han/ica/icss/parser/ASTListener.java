@@ -119,13 +119,26 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("enterDeclaration");
+		currentContainer.push(new Stylerule());
 		super.enterDeclaration(ctx);
 	}
 	@Override
 	public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("exitDeclaration");
-		// NIET attachSafe hier als je geen declaration node pusht
+		attachSafe("exitDeclaration");
 		super.exitDeclaration(ctx);
+	}
+
+	@Override public void enterDeclarationName(ICSSParser.DeclarationNameContext ctx) {
+		System.out.println("enterDeclarationName");
+		currentContainer.push(new Stylerule());
+		super.enterDeclarationName(ctx);
+	}
+
+	@Override public void exitDeclarationName(ICSSParser.DeclarationNameContext ctx) {
+		System.out.println("exitDeclarationName");
+		attachSafe("exitDeclarationName");
+		super.exitDeclarationName(ctx);
 	}
 
 	@Override
