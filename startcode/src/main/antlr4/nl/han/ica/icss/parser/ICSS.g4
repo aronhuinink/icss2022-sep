@@ -55,7 +55,7 @@ tag_selector: LOWER_IDENT;
 declaration: (declarationName COLON value SEMICOLON) | statement;
 declarationName: LOWER_IDENT;
 statement: ifStatement elseClause?;
-ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;
+ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;//TODO maak een body if statement anders dan declaration en zet declaration weer aan
 elseClause: ELSE OPEN_BRACE declaration+ CLOSE_BRACE;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
 arithmeticOperator: PLUS | MUL;
