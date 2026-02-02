@@ -59,12 +59,13 @@ ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX
 elseClause: ELSE OPEN_BRACE declaration+ CLOSE_BRACE;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
 arithmeticOperator: PLUS | MUL;
-datatype: color | pixelSize | percentage | boolLiteral  | CAPITAL_IDENT | integer;
+datatype: color | pixelSize | percentage | boolLiteral  | literal | integer;
 integer: MIN? SCALAR;
 boolLiteral: TRUE | FALSE;
 color: COLOR;
 pixelSize: PIXELSIZE;
 percentage: PERCENTAGE;
+literal: CAPITAL_IDENT;
 variable: variableName ASSIGNMENT_OPERATOR value SEMICOLON;//declaration
 variableName: CAPITAL_IDENT;
 

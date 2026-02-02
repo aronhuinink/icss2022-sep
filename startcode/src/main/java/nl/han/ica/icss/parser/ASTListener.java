@@ -119,7 +119,7 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
 		System.out.println("enterDeclaration");
-		currentContainer.push(new Stylerule());
+		currentContainer.push(new Declaration());
 		super.enterDeclaration(ctx);
 	}
 	@Override
