@@ -311,15 +311,15 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void enterVariableName(ICSSParser.VariableNameContext ctx) {
-		System.out.println("enterValue");
+		System.out.println("enterVariableName");
 		currentContainer.push(new VariableReference(ctx.getText()));
 		super.enterVariableName(ctx);
 	}
 
 	@Override
 	public void exitVariableName(ICSSParser.VariableNameContext ctx) {
-		System.out.println("exitValue");
-		attachSafe("exitValue");
+		System.out.println("exitVariableName");
+		attachSafe("exitVariableName");
 		super.exitVariableName(ctx);
 	}
 
