@@ -131,7 +131,7 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override public void enterDeclarationName(ICSSParser.DeclarationNameContext ctx) {
 		System.out.println("enterDeclarationName");
-		currentContainer.push(new Stylerule());
+		currentContainer.push(new PropertyName(ctx.getText()));
 		super.enterDeclarationName(ctx);
 	}
 
