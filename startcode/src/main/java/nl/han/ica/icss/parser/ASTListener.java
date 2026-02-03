@@ -323,5 +323,21 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitVariableName(ctx);
 	}
 
+	@Override public void enterStyleRule(ICSSParser.StyleRuleContext ctx) {
+		System.out.println("enterStyleRule");
+		currentContainer.push(new Stylerule());
+		super.enterStyleRule(ctx);
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStyleRule(ICSSParser.StyleRuleContext ctx) {
+		System.out.println("exitStyleRule");
+		attachSafe("exitStyleRule");
+		super.exitStyleRule(ctx);
+	}
+
 }
 

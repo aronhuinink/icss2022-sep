@@ -52,7 +52,8 @@ selector: class_selector | id_selector | tag_selector;
 class_selector: CLASS_IDENT;
 id_selector: ID_IDENT;
 tag_selector: LOWER_IDENT;
-declaration: (declarationName COLON value SEMICOLON) | statement;
+declaration: styleRule | statement;
+styleRule: declarationName COLON value SEMICOLON;
 declarationName: LOWER_IDENT;
 statement: ifStatement elseClause?;
 ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;//TODO maak een body if statement anders dan declaration en zet declaration weer aan
