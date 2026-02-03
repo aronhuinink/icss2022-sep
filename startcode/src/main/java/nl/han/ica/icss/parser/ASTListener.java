@@ -118,33 +118,57 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void enterDeclaration(ICSSParser.DeclarationContext ctx) {
-		System.out.println("enterDeclaration");
-		//currentContainer.push(new Stylerule());
+		if (ctx.declarationName() != null) {
+			System.out.println("enterDeclaration (property)");
+			currentContainer.push(new Declaration());
+		}
 		super.enterDeclaration(ctx);
 	}
+
 	@Override
 	public void exitDeclaration(ICSSParser.DeclarationContext ctx) {
-		System.out.println("exitDeclaration");
-		//attachSafe("exitDeclaration");
+		if (ctx.declarationName() != null) {
+			System.out.println("exitDeclaration (property)");
+			attachSafe("exitDeclaration");
+		}
 		super.exitDeclaration(ctx);
 	}
 
-	@Override public void enterDeclarationName(ICSSParser.DeclarationNameContext ctx) {
+	@Override
+	public void enterDeclarationName(ICSSParser.DeclarationNameContext ctx) {
 		System.out.println("enterDeclarationName");
 		currentContainer.push(new PropertyName(ctx.getText()));
 		super.enterDeclarationName(ctx);
 	}
 
-	@Override public void exitDeclarationName(ICSSParser.DeclarationNameContext ctx) {
+	@Override
+	public void exitDeclarationName(ICSSParser.DeclarationNameContext ctx) {
 		System.out.println("exitDeclarationName");
-		attachSafe("exitDeclarationName");
+		attachSafe("exitDeclarationName"); // -> parent is nu Declaration
 		super.exitDeclarationName(ctx);
 	}
 
 	@Override
 	public void enterIfStatement(ICSSParser.IfStatementContext ctx) {
 		System.out.println("enterIfStatement");
-		currentContainer.push(new IfClause());
+
+		IfClause ifClause = new IfClause();
+		currentContainer.push(ifClause);
+
+		// child(2) is het item tussen [ en ]: IF '[' X ']'
+		String condText = ctx.getChild(2).getText();
+
+		ASTNode conditionNode;
+		if ("TRUE".equals(condText) || "FALSE".equals(condText)) {
+			conditionNode = new BoolLiteral(condText);
+		} else {
+			// Zowel LOWER_IDENT als CAPITAL_IDENT hier afvangen
+			conditionNode = new VariableReference(condText);
+		}
+
+		// direct attachen aan de IfClause (zonder stack-pop)
+		ifClause.addChild(conditionNode);
+
 		super.enterIfStatement(ctx);
 	}
 
@@ -184,14 +208,14 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
 		System.out.println("enterValue");
-		currentContainer.push(new VariableReference(ctx.getText()));
+
 		super.enterValue(ctx);
 	}
 
 	@Override
 	public void exitValue(ICSSParser.ValueContext ctx) {
 		System.out.println("exitValue");
-		attachSafe("exitValue");
+
 		super.exitValue(ctx);
 	}
 
@@ -323,5 +347,18 @@ public class ASTListener extends ICSSBaseListener {
 		super.exitVariableName(ctx);
 	}
 
+	@Override
+	public void enterLiteral(ICSSParser.LiteralContext ctx) {
+		System.out.println("enterLiteral");
+		currentContainer.push(new VariableReference(ctx.getText()));
+		super.enterLiteral(ctx);
+	}
+
+	@Override
+	public void exitLiteral(ICSSParser.LiteralContext ctx) {
+		System.out.println("exitLiteral");
+		attachSafe("exitLiteral"); // -> parent is Declaration (via datatype/value)
+		super.exitLiteral(ctx);
+	}
 }
 
