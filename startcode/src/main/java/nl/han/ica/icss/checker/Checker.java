@@ -13,15 +13,18 @@ public class Checker {
 
     private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;
 
+
     public void check(AST ast) {
         variableTypes = new HANLinkedList<>();
-        //checkStylesheet(ast.root);
+        checkStylesheet(ast.root);
     }
 
     private void checkStylesheet(Stylesheet root) {
+        System.out.println("--------------------------------------------------------");
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
-            if(child instanceof VariableReference) {//wordt schijnbaar magisch herkent?
+            if(child instanceof VariableReference) {
+                System.out.println("children are instances of variablereference");
                 checkVariableReference((VariableReference) child);
             }
         }
