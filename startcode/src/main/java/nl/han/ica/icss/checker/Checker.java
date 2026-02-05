@@ -39,6 +39,15 @@ public class Checker {
                     }
                 }
             }
+
+            if(child instanceof Stylerule){
+                for (ASTNode grandChild : child.getChildren()) {
+                    if(grandChild instanceof IfClause){
+
+                        checkIfClause((IfClause) grandChild);
+                    }
+                }
+            }
         }
 
         for (int i = 0; i < variableNames.size(); i++) {
@@ -59,6 +68,20 @@ public class Checker {
             }
         }
         node.setError("Variable not found");
+    }
+
+    private void checkIfClause(IfClause node){
+        System.out.println("checkIfClause");
+        for (ASTNode child : node.getChildren()) {
+            if(child instanceof IfClause){
+                checkIfClause((IfClause) child);
+            }
+
+            else if(child instanceof VariableReference){
+                checkVariableReference((VariableReference) child);
+            }
+        }
+
     }
 
 }
