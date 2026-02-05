@@ -377,5 +377,18 @@ public class ASTListener extends ICSSBaseListener {
 	}
 
 
+	@Override public void enterOperation(ICSSParser.OperationContext ctx) {
+		System.out.println("enterOperation");
+		currentContainer.push(new MultiplyOperation());
+		super.enterOperation(ctx);
+	}
+
+	@Override public void exitOperation(ICSSParser.OperationContext ctx) {
+		System.out.println("exitOperation");
+		attachSafe("exitOperation"); // -> parent is Declaration (via datatype/value)
+		super.exitOperation(ctx);
+	}
+
+
 }
 
