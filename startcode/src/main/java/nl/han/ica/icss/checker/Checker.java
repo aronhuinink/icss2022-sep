@@ -3,6 +3,10 @@ package nl.han.ica.icss.checker;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
+import nl.han.ica.icss.ast.literals.ColorLiteral;
+import nl.han.ica.icss.ast.literals.PixelLiteral;
+import nl.han.ica.icss.ast.literals.ScalarLiteral;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
@@ -14,12 +18,15 @@ public class Checker {
 
     private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;
     ArrayList<String> variableNames = new ArrayList<>();
+    ArrayList<VariableHelper> variableHelperList = new ArrayList<>();
 
     /*
     TODO
-    Check of variables daadwerkelijk gedefinieerd zijn
-    stap 1: sla de namen van de variabele op in een lijst V
-    stap 2: vergelijk de namen van de variabelen op de plekken waar ze gebruikt worden
+    Controleer of de operanden van de operaties plus en min van gelijk type zijn. Je mag geen pixels bij percentages optellen bijvoorbeeld. Controleer dat bij vermenigvuldigen minimaal een operand een scalaire waarde is. Zo mag 20% * 3 en 4 * 5 wel, maar mag 2px * 3px niet.
+    V stap 1: maak de arraylist 2d zodat de datatype opgeslagen kan worden
+    V 2: sla de datatype op bij het maken van de functie
+     3: controleer bij gebruik
+
      */
 
 
@@ -33,11 +40,30 @@ public class Checker {
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
             if(child instanceof VariableAssignment) {
+                String variableName = "";
+                String variableDatatype = "";
                 for (ASTNode grandChild : child.getChildren()) {
+
                     if(grandChild instanceof VariableReference){
-                        addVariableToList((VariableReference) grandChild);
+                        variableName = ((VariableReference) grandChild).name;
+                    }
+
+                    else if(grandChild instanceof ColorLiteral){
+                        variableDatatype = "colorLiteral";
+                    }
+                    else if(grandChild instanceof PixelLiteral){
+                        variableDatatype = "PixelLiteral";
+                    }
+                    else if(grandChild instanceof ScalarLiteral){
+                        variableDatatype = "ScalarLiteral";
+                    }
+                    else if(grandChild instanceof BoolLiteral){
+                        variableDatatype = "BoolLiteral";
                     }
                 }
+
+                if(Objects.equals(variableName, "") || Objects.equals(variableDatatype, "")) System.out.println("Aron warning: empty name or datatype");
+                addVariableToList(variableName, variableDatatype);
             }
 
             if(child instanceof Stylerule){
@@ -68,9 +94,17 @@ public class Checker {
         }
     }
 
-    private void addVariableToList(VariableReference node) {
-        String variableName = node.name;
-        variableNames.add(variableName);
+    private void addVariableToList(String variableName, String variableDatatype) {
+//        String variableName = node.name;
+//        variableNames.add(variableName);
+
+        //klasselijst maken die de naam en de datatype opslaat voor elke variabele
+        VariableHelper variableHelper = new VariableHelper();
+        variableHelper.setName(variableName);
+        variableHelper.setDatatype(variableDatatype);
+        variableHelperList.add(variableHelper);
+
+        System.out.println(variableHelper.getName() + " " + variableHelper.getDatatype());
     }
 
     private void checkVariableReference(VariableReference node) {
