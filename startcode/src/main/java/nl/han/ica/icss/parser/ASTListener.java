@@ -4,6 +4,9 @@ import nl.han.ica.datastructures.IHANStack;
 import nl.han.ica.datastructures.HANStack;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.*;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.selectors.ClassSelector;
 import nl.han.ica.icss.ast.selectors.IdSelector;
 import nl.han.ica.icss.ast.selectors.TagSelector;
@@ -222,11 +225,23 @@ public class ASTListener extends ICSSBaseListener {
 	@Override
 	public void enterArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("enterArithmeticOperator");
+
+		if(ctx.getText().equals("*")){
+			currentContainer.push(new MultiplyOperation());
+		}
+		else if(ctx.getText().equals("+")){
+			currentContainer.push(new AddOperation());
+		}
+		else if(ctx.getText().equals("-")){
+			currentContainer.push(new SubtractOperation());
+		}
 		super.enterArithmeticOperator(ctx);
 	}
 	@Override
 	public void exitArithmeticOperator(ICSSParser.ArithmeticOperatorContext ctx) {
 		System.out.println("exitArithmeticOperator");
+		attachSafe("exitArithmeticOperator");
+
 		super.exitArithmeticOperator(ctx);
 	}
 
@@ -360,5 +375,7 @@ public class ASTListener extends ICSSBaseListener {
 		attachSafe("exitLiteral"); // -> parent is Declaration (via datatype/value)
 		super.exitLiteral(ctx);
 	}
+
+
 }
 

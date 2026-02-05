@@ -58,7 +58,7 @@ statement: ifStatement elseClause?;
 ifStatement: IF BOX_BRACKET_OPEN (boolLiteral | LOWER_IDENT | CAPITAL_IDENT) BOX_BRACKET_CLOSE OPEN_BRACE declaration+ CLOSE_BRACE;//TODO maak een body if statement anders dan declaration en zet declaration weer aan
 elseClause: ELSE OPEN_BRACE declaration+ CLOSE_BRACE;
 value: datatype | ((datatype arithmeticOperator)+ datatype);
-arithmeticOperator: PLUS | MUL;
+arithmeticOperator: PLUS | MUL | MIN;
 datatype: color | pixelSize | percentage | boolLiteral  | literal | integer;
 integer: MIN? SCALAR;
 boolLiteral: TRUE | FALSE;
