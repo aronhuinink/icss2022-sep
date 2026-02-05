@@ -46,6 +46,10 @@ public class Checker {
 
                         checkIfClause((IfClause) grandChild);
                     }
+
+                    if(grandChild instanceof Declaration){
+                        checkDeclaration((Declaration) grandChild);
+                    }
                 }
             }
         }
@@ -56,6 +60,14 @@ public class Checker {
 
     }
 
+    private void checkDeclaration(Declaration node) {
+        for (ASTNode child : node.getChildren()) {
+            if (child instanceof VariableReference) {
+                checkVariableReference((VariableReference) child);
+            }
+        }
+    }
+
     private void addVariableToList(VariableReference node) {
         String variableName = node.name;
         variableNames.add(variableName);
@@ -63,6 +75,7 @@ public class Checker {
 
     private void checkVariableReference(VariableReference node) {
         for (String name : variableNames) {
+            System.out.println(name + " == " + node.name);
             if (Objects.equals(name, node.name)) {
                 return;
             }
@@ -79,6 +92,10 @@ public class Checker {
 
             else if(child instanceof VariableReference){
                 checkVariableReference((VariableReference) child);
+            }
+
+            else if(child instanceof Declaration){
+                checkDeclaration((Declaration) child);
             }
         }
 
