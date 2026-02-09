@@ -210,6 +210,7 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
+		System.out.println("enterValue");
 		if (ctx.getChildCount() == 1) {
 			return;
 		}
@@ -224,6 +225,7 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void exitValue(ICSSParser.ValueContext ctx) {
+		System.out.println("exitValue");
 		if (ctx.getChildCount() == 1) {
 			return;
 		}
@@ -329,10 +331,12 @@ public class ASTListener extends ICSSBaseListener {
 	 */
 	@Override
 	public void enterPixelSize(ICSSParser.PixelSizeContext ctx) {
+		System.out.println("enterPixelSize");
 		currentContainer.push(new PixelLiteral(ctx.getText()));
 	}
 	@Override
 	public void exitPixelSize(ICSSParser.PixelSizeContext ctx) {
+		System.out.println("exitPixelSize");
 		attachSafe("exitPixelSize");
 	}
 	/**
@@ -384,8 +388,5 @@ public class ASTListener extends ICSSBaseListener {
 		attachSafe("exitLiteral"); // -> parent is Declaration (via datatype/value)
 		super.exitLiteral(ctx);
 	}
-
-
-
 }
 

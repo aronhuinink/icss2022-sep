@@ -7,6 +7,9 @@ import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.ColorLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.operations.AddOperation;
+import nl.han.ica.icss.ast.operations.MultiplyOperation;
+import nl.han.ica.icss.ast.operations.SubtractOperation;
 import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
@@ -130,8 +133,28 @@ public class Checker {
             else if(child instanceof Declaration){
                 checkDeclaration((Declaration) child);
             }
+
+            else if(child instanceof AddOperation ){
+                checkAddOperation((AddOperation) child);
+            } else if (child instanceof MultiplyOperation){
+                checkMultiplyOperation((MultiplyOperation) child);
+            }else if (child instanceof SubtractOperation){
+                checkSubtractOperation((SubtractOperation) child);
+            }
         }
 
+    }
+
+    private void checkAddOperation(AddOperation node){
+        System.out.println("checking add");
+    }
+
+    private void checkMultiplyOperation(MultiplyOperation node){
+        System.out.println("checking mul");
+    }
+
+    private void checkSubtractOperation(SubtractOperation node){
+        System.out.println("checking sub");
     }
 
 }
