@@ -95,8 +95,7 @@ public class Checker {
     }
 
     private void addVariableToList(String variableName, String variableDatatype) {
-//        String variableName = node.name;
-//        variableNames.add(variableName);
+        variableNames.add(variableName);
 
         //klasselijst maken die de naam en de datatype opslaat voor elke variabele
         VariableHelper variableHelper = new VariableHelper();
@@ -118,7 +117,6 @@ public class Checker {
     }
 
     private void checkIfClause(IfClause node){
-        System.out.println("checkIfClause");
         for (ASTNode child : node.getChildren()) {
             if(child instanceof IfClause){
                 checkIfClause((IfClause) child);
