@@ -52,7 +52,7 @@ public class Checker {
                     }
 
                     else if(grandChild instanceof ColorLiteral){
-                        variableDatatype = "colorLiteral";
+                        variableDatatype = "ColorLiteral";
                     }
                     else if(grandChild instanceof PixelLiteral){
                         variableDatatype = "PixelLiteral";
@@ -151,7 +151,6 @@ public class Checker {
 
     private void checkAddOperation(AddOperation node){
 
-
         ArrayList<String> types = new ArrayList<>();
 
         for (ASTNode child : node.getChildren()) {
@@ -159,7 +158,15 @@ public class Checker {
                 checkVariableReference((VariableReference) child);
             }
 
-            types.add(String.valueOf(child.getClass()));
+//            if(child instanceof ColorLiteral) {
+//                node.setError("Colors can't be used in operations!");
+//            }
+
+            if(!(child instanceof VariableReference))
+                types.add(child.getClass().getSimpleName());
+            else{
+                types.add(checkVariableReferenceType((VariableReference) child));
+            }
         }
 
         for(String type : types){
@@ -178,5 +185,17 @@ public class Checker {
     private void checkSubtractOperation(SubtractOperation node){
         System.out.println("checking sub");
     }
+
+    private String checkVariableReferenceType(VariableReference node){
+        String type = null;
+
+        for(VariableHelper instance: variableHelperList){
+            if(Objects.equals(instance.getName(), node.name)){//de variabele naam vinden in de arraylist, na vinden checken of de types gelijk aan elkaar zijn
+                type = instance.getDatatype();
+            }
+        }
+        return type;
+    }
+
 
 }
