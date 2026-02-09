@@ -94,7 +94,17 @@ public class Checker {
             if (child instanceof VariableReference) {
                 checkVariableReference((VariableReference) child);
             }
+
+            else if(child instanceof AddOperation ){
+                checkAddOperation((AddOperation) child);
+            } else if (child instanceof MultiplyOperation){
+                checkMultiplyOperation((MultiplyOperation) child);
+            }else if (child instanceof SubtractOperation){
+                checkSubtractOperation((SubtractOperation) child);
+            }
         }
+
+
     }
 
     private void addVariableToList(String variableName, String variableDatatype) {
@@ -134,13 +144,7 @@ public class Checker {
                 checkDeclaration((Declaration) child);
             }
 
-            else if(child instanceof AddOperation ){
-                checkAddOperation((AddOperation) child);
-            } else if (child instanceof MultiplyOperation){
-                checkMultiplyOperation((MultiplyOperation) child);
-            }else if (child instanceof SubtractOperation){
-                checkSubtractOperation((SubtractOperation) child);
-            }
+
         }
 
     }
