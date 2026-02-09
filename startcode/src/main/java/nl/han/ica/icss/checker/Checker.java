@@ -158,9 +158,32 @@ public class Checker {
                 checkVariableReference((VariableReference) child);
             }
 
-//            if(child instanceof ColorLiteral) {
-//                node.setError("Colors can't be used in operations!");
-//            }
+            if(!(child instanceof VariableReference))
+                types.add(child.getClass().getSimpleName());
+            else{
+                types.add(checkVariableReferenceType((VariableReference) child));
+            }
+        }
+
+        for(String type : types){
+            System.out.println(type);
+        }
+
+        if(!Objects.equals(types.get(0), types.get(1))){
+            node.setError("Operation variables not of same type!");
+        }
+        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+            node.setError("Can't calculate with colors");
+        }
+    }
+
+    private void checkMultiplyOperation(MultiplyOperation node){
+        ArrayList<String> types = new ArrayList<>();
+
+        for (ASTNode child : node.getChildren()) {
+            if(child instanceof VariableReference){
+                checkVariableReference((VariableReference) child);
+            }
 
             if(!(child instanceof VariableReference))
                 types.add(child.getClass().getSimpleName());
@@ -176,14 +199,36 @@ public class Checker {
         if(!Objects.equals(types.get(0), types.get(1))){
             node.setError("Operation variables not of same type!");
         }
-    }
-
-    private void checkMultiplyOperation(MultiplyOperation node){
-        System.out.println("checking mul");
+        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+            node.setError("Can't calculate with colors");
+        }
     }
 
     private void checkSubtractOperation(SubtractOperation node){
-        System.out.println("checking sub");
+        ArrayList<String> types = new ArrayList<>();
+
+        for (ASTNode child : node.getChildren()) {
+            if(child instanceof VariableReference){
+                checkVariableReference((VariableReference) child);
+            }
+
+            if(!(child instanceof VariableReference))
+                types.add(child.getClass().getSimpleName());
+            else{
+                types.add(checkVariableReferenceType((VariableReference) child));
+            }
+        }
+
+        for(String type : types){
+            System.out.println(type);
+        }
+
+        if(!Objects.equals(types.get(0), types.get(1))){
+            node.setError("Operation variables not of same type!");
+        }
+        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+            node.setError("Can't calculate with colors");
+        }
     }
 
     private String checkVariableReferenceType(VariableReference node){
