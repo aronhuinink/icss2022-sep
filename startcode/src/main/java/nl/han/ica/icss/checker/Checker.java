@@ -95,7 +95,7 @@ public class Checker {
     }
 
     private void addVariableToList(String variableName, String variableDatatype) {
-        variableNames.add(variableName);
+        //variableNames.add(variableName);
 
         //klasselijst maken die de naam en de datatype opslaat voor elke variabele
         VariableHelper variableHelper = new VariableHelper();
@@ -107,12 +107,13 @@ public class Checker {
     }
 
     private void checkVariableReference(VariableReference node) {
-        for (String name : variableNames) {
-            System.out.println(name + " == " + node.name);
-            if (Objects.equals(name, node.name)) {
+
+        for(VariableHelper instance: variableHelperList){
+            if (Objects.equals(instance.getName(), node.name)) {
                 return;
             }
         }
+
         node.setError("Variable not found");
     }
 
