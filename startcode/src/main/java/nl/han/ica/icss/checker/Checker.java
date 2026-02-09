@@ -150,10 +150,15 @@ public class Checker {
     }
 
     private void checkAddOperation(AddOperation node){
+
+
         ArrayList<String> types = new ArrayList<>();
-        //String[] types = new String[2];
 
         for (ASTNode child : node.getChildren()) {
+            if(child instanceof VariableReference){
+                checkVariableReference((VariableReference) child);
+            }
+
             types.add(String.valueOf(child.getClass()));
         }
 
