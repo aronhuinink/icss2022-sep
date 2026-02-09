@@ -150,7 +150,20 @@ public class Checker {
     }
 
     private void checkAddOperation(AddOperation node){
-        System.out.println("checking add");
+        ArrayList<String> types = new ArrayList<>();
+        //String[] types = new String[2];
+
+        for (ASTNode child : node.getChildren()) {
+            types.add(String.valueOf(child.getClass()));
+        }
+
+        for(String type : types){
+            System.out.println(type);
+        }
+
+        if(!Objects.equals(types.get(0), types.get(1))){
+            node.setError("Operation variables not of same type!");
+        }
     }
 
     private void checkMultiplyOperation(MultiplyOperation node){
