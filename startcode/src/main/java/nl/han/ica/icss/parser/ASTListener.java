@@ -210,16 +210,25 @@ public class ASTListener extends ICSSBaseListener {
 
 	@Override
 	public void enterValue(ICSSParser.ValueContext ctx) {
-		System.out.println("enterValue");
-
-		super.enterValue(ctx);
+		if (ctx.getChildCount() == 1) {
+			return;
+		}
+		if (ctx.getChild(1).getText().equals("+")) {
+			currentContainer.push(new AddOperation());
+		} else if (ctx.getChild(1).getText().equals("-")) {
+			currentContainer.push(new SubtractOperation());
+		} else if (ctx.getChild(1).getText().equals("*")) {
+			currentContainer.push(new MultiplyOperation());
+		}
 	}
 
 	@Override
 	public void exitValue(ICSSParser.ValueContext ctx) {
-		System.out.println("exitValue");
-
-		super.exitValue(ctx);
+		if (ctx.getChildCount() == 1) {
+			return;
+		}
+		ASTNode current = currentContainer.pop();
+		currentContainer.peek().addChild(current);
 	}
 
 	@Override
