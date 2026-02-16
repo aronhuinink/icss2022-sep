@@ -3,10 +3,7 @@ package nl.han.ica.icss.checker;
 import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
-import nl.han.ica.icss.ast.literals.BoolLiteral;
-import nl.han.ica.icss.ast.literals.ColorLiteral;
-import nl.han.ica.icss.ast.literals.PixelLiteral;
-import nl.han.ica.icss.ast.literals.ScalarLiteral;
+import nl.han.ica.icss.ast.literals.*;
 import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
@@ -137,10 +134,25 @@ public class Checker {
             }
 
             else if(child instanceof VariableReference){
+
+
+
                 checkVariableReference((VariableReference) child);
+
+                for(VariableHelper instance: variableHelperList){
+                    if(Objects.equals(instance.getName(), ((VariableReference) child).name)){
+                        if(Objects.equals(instance.getDatatype(), "BoolLiteral")) return;
+                    }
+
+                }
+                child.setError("If clause variable not boolean");
+
+            }
+            else if(child instanceof ColorLiteral || child instanceof PercentageLiteral || child instanceof PixelLiteral || child instanceof ScalarLiteral){
+                child.setError("If clause variable not boolean");//WHOOOPS blijkbaar niet nodig fack it te lui om te verwijderen
             }
 
-            else if(child instanceof Declaration){
+             if(child instanceof Declaration){
                 checkDeclaration((Declaration) child);
             }
 
