@@ -11,23 +11,16 @@ import nl.han.ica.icss.ast.types.ExpressionType;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Objects;
 
 
 public class Checker {
 
-    private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;
+    private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;//hier wordt de scope opgeslagen, de variableHelperList moeten hierin verandert worden maar voor nu lui
     ArrayList<String> variableNames = new ArrayList<>();
     ArrayList<VariableHelper> variableHelperList = new ArrayList<>();
 
-    /*
-    TODO
-    Controleer of de operanden van de operaties plus en min van gelijk type zijn. Je mag geen pixels bij percentages optellen bijvoorbeeld. Controleer dat bij vermenigvuldigen minimaal een operand een scalaire waarde is. Zo mag 20% * 3 en 4 * 5 wel, maar mag 2px * 3px niet.
-    V stap 1: maak de arraylist 2d zodat de datatype opgeslagen kan worden
-    V 2: sla de datatype op bij het maken van de functie
-     3: controleer bij gebruik
-
-     */
 
 
     public void check(AST ast) {
