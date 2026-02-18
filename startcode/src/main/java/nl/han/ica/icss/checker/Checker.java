@@ -32,23 +32,10 @@ public class Checker {
         System.out.println("--------------------------------------------------------");
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
-            addVariableToList(child);
+            addVariableToList(child, false);
 
             if(child instanceof Stylerule){
-                for (ASTNode grandChild : child.getChildren()) {
-                    if(grandChild instanceof IfClause){
-
-                        checkIfClause((IfClause) grandChild);
-                    }
-
-                    if(grandChild instanceof Declaration){
-                        checkDeclaration((Declaration) grandChild);
-                    }
-
-                    if(grandChild instanceof VariableAssignment){
-                        addVariableToList((VariableAssignment) grandChild);
-                    }
-                }
+                checkStylerule(child);
             }
         }
 
@@ -58,7 +45,26 @@ public class Checker {
 
     }
 
-    private void addVariableToList(ASTNode child) {
+    private void checkStylerule(ASTNode node) {
+        for (ASTNode Child : node.getChildren()) {
+            if(Child instanceof IfClause){
+
+                checkIfClause((IfClause) Child);
+            }
+
+            if(Child instanceof Declaration){
+                checkDeclaration((Declaration) Child);
+            }
+
+            if(Child instanceof VariableAssignment){
+                addVariableToList(Child, true);
+            }
+        }
+
+        removeLocalVariablesFromList();
+    }
+
+    private void addVariableToList(ASTNode child, boolean isLocal) {
         if(child instanceof VariableAssignment) {
             String variableName = "";
             String variableDatatype = "";
@@ -83,7 +89,7 @@ public class Checker {
             }
 
             if(Objects.equals(variableName, "") || Objects.equals(variableDatatype, "")) System.out.println("Aron warning: empty name or datatype");
-            addVariableToList(variableName, variableDatatype);
+            addVariableToList(variableName, variableDatatype, isLocal);
         }
     }
 
@@ -105,16 +111,17 @@ public class Checker {
 
     }
 
-    private void addVariableToList(String variableName, String variableDatatype) {
+    private void addVariableToList(String variableName, String variableDatatype, boolean isLocal) {
         //variableNames.add(variableName);
 
         //klasselijst maken die de naam en de datatype opslaat voor elke variabele
         VariableHelper variableHelper = new VariableHelper();
         variableHelper.setName(variableName);
         variableHelper.setDatatype(variableDatatype);
+        variableHelper.setIsLocal(isLocal);
         variableHelperList.add(variableHelper);
 
-        System.out.println(variableHelper.getName() + " " + variableHelper.getDatatype());
+        System.out.println(variableHelper.getName() + " " + variableHelper.getDatatype() + " " + variableHelper.getIsLocal());
     }
 
     private void checkVariableReference(VariableReference node) {
@@ -256,4 +263,7 @@ public class Checker {
     }
 
 
+    private void removeLocalVariablesFromList(){
+        variableHelperList.removeIf(variable -> !variable.getIsLocal());
+    }
 }
