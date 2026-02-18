@@ -264,6 +264,6 @@ public class Checker {
 
 
     private void removeLocalVariablesFromList(){
-        variableHelperList.removeIf(variable -> !variable.getIsLocal());
+        variableHelperList.removeIf(variable -> variable.getIsLocal());
     }
 }
