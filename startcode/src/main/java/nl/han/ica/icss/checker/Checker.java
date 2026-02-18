@@ -32,32 +32,7 @@ public class Checker {
         System.out.println("--------------------------------------------------------");
         variableTypes.addFirst(new HashMap<>());
         for (ASTNode child : root.getChildren()) {
-            if(child instanceof VariableAssignment) {
-                String variableName = "";
-                String variableDatatype = "";
-                for (ASTNode grandChild : child.getChildren()) {
-
-                    if(grandChild instanceof VariableReference){
-                        variableName = ((VariableReference) grandChild).name;
-                    }
-
-                    else if(grandChild instanceof ColorLiteral){
-                        variableDatatype = "ColorLiteral";
-                    }
-                    else if(grandChild instanceof PixelLiteral){
-                        variableDatatype = "PixelLiteral";
-                    }
-                    else if(grandChild instanceof ScalarLiteral){
-                        variableDatatype = "ScalarLiteral";
-                    }
-                    else if(grandChild instanceof BoolLiteral){
-                        variableDatatype = "BoolLiteral";
-                    }
-                }
-
-                if(Objects.equals(variableName, "") || Objects.equals(variableDatatype, "")) System.out.println("Aron warning: empty name or datatype");
-                addVariableToList(variableName, variableDatatype);
-            }
+            addVariableToList(child);
 
             if(child instanceof Stylerule){
                 for (ASTNode grandChild : child.getChildren()) {
@@ -69,6 +44,10 @@ public class Checker {
                     if(grandChild instanceof Declaration){
                         checkDeclaration((Declaration) grandChild);
                     }
+
+                    if(grandChild instanceof VariableAssignment){
+                        addVariableToList((VariableAssignment) grandChild);
+                    }
                 }
             }
         }
@@ -77,6 +56,35 @@ public class Checker {
             System.out.println(variableNames.get(i));
         }
 
+    }
+
+    private void addVariableToList(ASTNode child) {
+        if(child instanceof VariableAssignment) {
+            String variableName = "";
+            String variableDatatype = "";
+            for (ASTNode grandChild : child.getChildren()) {
+
+                if(grandChild instanceof VariableReference){
+                    variableName = ((VariableReference) grandChild).name;
+                }
+
+                else if(grandChild instanceof ColorLiteral){
+                    variableDatatype = "ColorLiteral";
+                }
+                else if(grandChild instanceof PixelLiteral){
+                    variableDatatype = "PixelLiteral";
+                }
+                else if(grandChild instanceof ScalarLiteral){
+                    variableDatatype = "ScalarLiteral";
+                }
+                else if(grandChild instanceof BoolLiteral){
+                    variableDatatype = "BoolLiteral";
+                }
+            }
+
+            if(Objects.equals(variableName, "") || Objects.equals(variableDatatype, "")) System.out.println("Aron warning: empty name or datatype");
+            addVariableToList(variableName, variableDatatype);
+        }
     }
 
     private void checkDeclaration(Declaration node) {
