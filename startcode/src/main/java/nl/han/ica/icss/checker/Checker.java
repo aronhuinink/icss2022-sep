@@ -192,6 +192,8 @@ public class Checker {
         if(!Objects.equals(types.get(0), types.get(1))){
             node.setError("Operation variables not of same type!");
         }
+
+
         if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
             node.setError("Can't calculate with colors");
         }
@@ -216,8 +218,8 @@ public class Checker {
             System.out.println(type);
         }
 
-        if(!Objects.equals(types.get(0), types.get(1))){
-            node.setError("Operation variables not of same type!");
+        if(Objects.equals(types.get(0), "ScalarLiteral") || Objects.equals(types.get(1), "ScalarLiteral")){
+            node.setError("at least one needs to be scalar");
         }
         if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
             node.setError("Can't calculate with colors");
