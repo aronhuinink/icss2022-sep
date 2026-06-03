@@ -50,7 +50,7 @@ public class Generator {
 		String outcome = "";
 
 		for (ASTNode child : node.getChildren()) {
-			
+
 
 		}
 
