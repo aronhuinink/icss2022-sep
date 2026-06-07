@@ -1,5 +1,6 @@
 package nl.han.ica.icss.transforms;
 
+import nl.han.ica.datastructures.HANLinkedList;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
@@ -17,14 +18,33 @@ public class Evaluator implements Transform {
     private IHANLinkedList<HashMap<String, Literal>> variableValues;
 
     public Evaluator() {
-        //variableValues = new HANLinkedList<>();
+        variableValues = new HANLinkedList<>();
     }
 
     @Override
     public void apply(AST ast) {
-        //variableValues = new HANLinkedList<>();
+        variableValues = new HANLinkedList<>();
 
+        applyStylesheet(ast.root);
     }
 
-    
+    private void applyStylesheet(Stylesheet stylesheet) {
+        for (ASTNode child : stylesheet.getChildren()) {
+            if (child instanceof VariableReference) {
+                applyVariableReference((VariableReference) child);
+            }
+        }
+    }
+
+    private void applyVariableReference(VariableReference variableReference) {
+        for (ASTNode child : variableReference.getChildren()) {
+            if (child instanceof AddOperation) {
+                applyAddOperation((AddOperation) child);
+            }
+        }
+    }
+
+    private void applyAddOperation(AddOperation child) {
+
+    }
 }
