@@ -37,12 +37,26 @@ public class Checker {
             if(child instanceof Stylerule){
                 checkStylerule(child);
             }
+
+            if(child instanceof VariableAssignment){
+                checkVariableAssignment(child);
+            }
         }
 
         for (int i = 0; i < variableNames.size(); i++) {
             System.out.println(variableNames.get(i));
         }
 
+    }
+
+    private void checkVariableAssignment(ASTNode child) {
+        if(child instanceof AddOperation ){
+            checkAddOperation((AddOperation) child);
+        } else if (child instanceof MultiplyOperation){
+            checkMultiplyOperation((MultiplyOperation) child);
+        }else if (child instanceof SubtractOperation){
+            checkSubtractOperation((SubtractOperation) child);
+        }
     }
 
     private void checkStylerule(ASTNode node) {
@@ -164,26 +178,26 @@ public class Checker {
                 }
             }
 
-            else if(child instanceof BoolLiteral){
+            if(child instanceof BoolLiteral){
                 // mag dus niks doen
             }
 
-            else if(child instanceof ColorLiteral
+            if(child instanceof ColorLiteral
                     || child instanceof PercentageLiteral
                     || child instanceof PixelLiteral
                     || child instanceof ScalarLiteral){
                 child.setError("If clause expression not boolean");
             }
 
-            else if(child instanceof Declaration){
+            if(child instanceof Declaration){
                 checkDeclaration((Declaration) child);
             }
 
-            else if(child instanceof VariableAssignment){
+            if(child instanceof VariableAssignment){
                 addVariableToList(child, true);
             }
 
-            else if(child instanceof IfClause){
+            if(child instanceof IfClause){
                 checkIfClause((IfClause) child);
             }
         }
