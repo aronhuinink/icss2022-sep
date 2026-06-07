@@ -307,6 +307,10 @@ public class Checker {
         if(node instanceof VariableReference) {
             String type = checkVariableReferenceType((VariableReference) node);
 
+            if(type == null) {
+                return ExpressionType.UNDEFINED;
+            }
+
             switch(type) {
                 case "PixelLiteral":
                     return ExpressionType.PIXEL;
@@ -319,6 +323,44 @@ public class Checker {
                 case "BoolLiteral":
                     return ExpressionType.BOOL;
             }
+        }
+
+        if(node instanceof AddOperation || node instanceof SubtractOperation) {
+            ExpressionType left = getExpressionType(node.getChildren().get(0));
+            ExpressionType right = getExpressionType(node.getChildren().get(1));
+
+            if(left != right) {
+                node.setError("Operands must be same type");
+                return ExpressionType.UNDEFINED;
+            }
+
+            if(left == ExpressionType.COLOR) {
+                node.setError("Cannot calculate with colors");
+                return ExpressionType.UNDEFINED;
+            }
+
+            return left;
+        }
+
+        if(node instanceof MultiplyOperation) {
+            ExpressionType left = getExpressionType(node.getChildren().get(0));
+            ExpressionType right = getExpressionType(node.getChildren().get(1));
+
+            if(left == ExpressionType.COLOR || right == ExpressionType.COLOR) {
+                node.setError("Cannot calculate with colors");
+                return ExpressionType.UNDEFINED;
+            }
+
+            if(left != ExpressionType.SCALAR && right != ExpressionType.SCALAR) {
+                node.setError("At least one operand must be scalar");
+                return ExpressionType.UNDEFINED;
+            }
+
+            if(left == ExpressionType.SCALAR) {
+                return right;
+            }
+
+            return left;
         }
 
         return ExpressionType.UNDEFINED;
