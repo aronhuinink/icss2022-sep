@@ -108,6 +108,23 @@ public class Checker {
             }
         }
 
+        ExpressionType valueType = getExpressionType(node.expression);
+
+        switch (node.property.name) {
+            case "color":
+            case "background-color":
+                if (valueType != ExpressionType.COLOR) {
+                    node.setError("Property expects color");
+                }
+                break;
+
+            case "width":
+            case "height":
+                if (valueType != ExpressionType.PIXEL) {
+                    node.setError("Property expects pixels");
+                }
+                break;
+        }
 
     }
 
@@ -218,8 +235,8 @@ public class Checker {
             System.out.println(type);
         }
 
-        if(Objects.equals(types.get(0), "ScalarLiteral") || Objects.equals(types.get(1), "ScalarLiteral")){
-            node.setError("at least one needs to be scalar");
+        if(!Objects.equals(types.get(0), "ScalarLiteral") && !Objects.equals(types.get(1), "ScalarLiteral")){
+            node.setError("at least one operand needs to be scalar");
         }
         if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
             node.setError("Can't calculate with colors");
@@ -267,5 +284,43 @@ public class Checker {
 
     private void removeLocalVariablesFromList(){
         variableHelperList.removeIf(variable -> variable.getIsLocal());
+    }
+
+
+    private ExpressionType getExpressionType(ASTNode node) {
+
+        if(node instanceof PixelLiteral)
+            return ExpressionType.PIXEL;
+
+        if(node instanceof PercentageLiteral)
+            return ExpressionType.PERCENTAGE;
+
+        if(node instanceof ScalarLiteral)
+            return ExpressionType.SCALAR;
+
+        if(node instanceof ColorLiteral)
+            return ExpressionType.COLOR;
+
+        if(node instanceof BoolLiteral)
+            return ExpressionType.BOOL;
+
+        if(node instanceof VariableReference) {
+            String type = checkVariableReferenceType((VariableReference) node);
+
+            switch(type) {
+                case "PixelLiteral":
+                    return ExpressionType.PIXEL;
+                case "PercentageLiteral":
+                    return ExpressionType.PERCENTAGE;
+                case "ScalarLiteral":
+                    return ExpressionType.SCALAR;
+                case "ColorLiteral":
+                    return ExpressionType.COLOR;
+                case "BoolLiteral":
+                    return ExpressionType.BOOL;
+            }
+        }
+
+        return ExpressionType.UNDEFINED;
     }
 }
