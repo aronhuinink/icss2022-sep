@@ -17,95 +17,82 @@ import java.util.Objects;
 
 public class Checker {
 
-    private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;//hier wordt de scope opgeslagen, de variableHelperList moeten hierin verandert worden maar voor nu lui
-    ArrayList<String> variableNames = new ArrayList<>();
-    ArrayList<VariableHelper> variableHelperList = new ArrayList<>();
+    private HANLinkedList<HashMap<String, ExpressionType>> variableTypes;
+    private int scopeDepth = 0;
 
 
 
     public void check(AST ast) {
         variableTypes = new HANLinkedList<>();
+        scopeDepth = 0;
         checkStylesheet(ast.root);
     }
 
     private void checkStylesheet(Stylesheet root) {
-        System.out.println("--------------------------------------------------------");
-        variableTypes.addFirst(new HashMap<>());
+        enterScope(); // globale scope
+
         for (ASTNode child : root.getChildren()) {
-            addVariableToList(child, false);
+            if(child instanceof VariableAssignment){
+                checkVariableAssignment((VariableAssignment) child);
+            }
 
             if(child instanceof Stylerule){
                 checkStylerule(child);
             }
+        }
 
-            if(child instanceof VariableAssignment){
-                checkVariableAssignment(child);
+        exitScope();
+    }
+
+    private void checkVariableAssignment(VariableAssignment node) {
+        String variableName = "";
+        Expression expression = null;
+
+        for (ASTNode child : node.getChildren()) {
+            if(child instanceof VariableReference){
+                variableName = ((VariableReference) child).name;
+            }
+
+            if(child instanceof Expression){
+                expression = (Expression) child;
             }
         }
 
-        for (int i = 0; i < variableNames.size(); i++) {
-            System.out.println(variableNames.get(i));
+        if(variableName.equals("") || expression == null){
+            node.setError("Invalid variable assignment");
+            return;
         }
 
-    }
+        ExpressionType type = getExpressionType(expression);
 
-    private void checkVariableAssignment(ASTNode child) {
-        if(child instanceof AddOperation ){
-            checkAddOperation((AddOperation) child);
-        } else if (child instanceof MultiplyOperation){
-            checkMultiplyOperation((MultiplyOperation) child);
-        }else if (child instanceof SubtractOperation){
-            checkSubtractOperation((SubtractOperation) child);
+        if(type == ExpressionType.UNDEFINED){
+            node.setError("Variable assignment has invalid type");
+            return;
         }
+
+        addVariable(variableName, type);
     }
 
     private void checkStylerule(ASTNode node) {
-        for (ASTNode Child : node.getChildren()) {
-            if(Child instanceof IfClause){
+        enterScope(); // scope van stylerule
 
-                checkIfClause((IfClause) Child);
+        for (ASTNode child : node.getChildren()) {
+            if(child instanceof VariableAssignment){
+                checkVariableAssignment((VariableAssignment) child);
             }
 
-            if(Child instanceof Declaration){
-                checkDeclaration((Declaration) Child);
+            if(child instanceof IfClause){
+                checkIfClause((IfClause) child);
             }
 
-            if(Child instanceof VariableAssignment){
-                addVariableToList(Child, true);
+            if(child instanceof Declaration){
+                checkDeclaration((Declaration) child);
             }
         }
 
-        removeLocalVariablesFromList();
+        exitScope();
     }
 
-    private void addVariableToList(ASTNode child, boolean isLocal) {
-        if(child instanceof VariableAssignment) {
-            String variableName = "";
-            String variableDatatype = "";
-            for (ASTNode grandChild : child.getChildren()) {
-
-                if(grandChild instanceof VariableReference){
-                    variableName = ((VariableReference) grandChild).name;
-                }
-
-                else if(grandChild instanceof ColorLiteral){
-                    variableDatatype = "ColorLiteral";
-                }
-                else if(grandChild instanceof PixelLiteral){
-                    variableDatatype = "PixelLiteral";
-                }
-                else if(grandChild instanceof ScalarLiteral){
-                    variableDatatype = "ScalarLiteral";
-                }
-                else if(grandChild instanceof BoolLiteral){
-                    variableDatatype = "BoolLiteral";
-                }
-            }
-
-            if(Objects.equals(variableName, "") || Objects.equals(variableDatatype, "")) System.out.println("Aron warning: empty name or datatype");
-            addVariableToList(variableName, variableDatatype, isLocal);
-        }
-    }
 
     private void checkDeclaration(Declaration node) {
         for (ASTNode child : node.getChildren()) {
@@ -142,167 +129,112 @@ public class Checker {
 
     }
 
-    private void addVariableToList(String variableName, String variableDatatype, boolean isLocal) {
-        //variableNames.add(variableName);
-
-        //klasselijst maken die de naam en de datatype opslaat voor elke variabele
-        VariableHelper variableHelper = new VariableHelper();
-        variableHelper.setName(variableName);
-        variableHelper.setDatatype(variableDatatype);
-        variableHelper.setIsLocal(isLocal);
-        variableHelperList.add(variableHelper);
-
-        System.out.println(variableHelper.getName() + " " + variableHelper.getDatatype() + " " + variableHelper.getIsLocal());
-    }
 
     private void checkVariableReference(VariableReference node) {
-
-        for(VariableHelper instance: variableHelperList){
-            if (Objects.equals(instance.getName(), node.name)) {
-                return;
-            }
+        if(findVariableType(node.name) == ExpressionType.UNDEFINED){
+            node.setError("Variable not found");
         }
-
-        node.setError("Variable not found");
     }
 
     private void checkIfClause(IfClause node){
+        enterScope(); // scope van deze if
+
         for (ASTNode child : node.getChildren()) {
 
             if(child instanceof VariableReference){
-                checkVariableReference((VariableReference) child);
-
                 ExpressionType type = getExpressionType(child);
-                if(type != ExpressionType.BOOL){
-                    child.setError("If clause variable not boolean");
+
+                if(type == ExpressionType.UNDEFINED){
+                    child.setError("Variable not found");
+                }
+                else if(type != ExpressionType.BOOL){
+                    child.setError("If clause condition must be boolean");
                 }
             }
 
-            if(child instanceof BoolLiteral){
-                // mag dus niks doen
+            else if(child instanceof BoolLiteral){
+                // geldig
             }
 
-            if(child instanceof ColorLiteral
+            else if(child instanceof ColorLiteral
                     || child instanceof PercentageLiteral
                     || child instanceof PixelLiteral
                     || child instanceof ScalarLiteral){
-                child.setError("If clause expression not boolean");
+                child.setError("If clause condition must be boolean");
             }
 
-            if(child instanceof Declaration){
+            else if(child instanceof VariableAssignment){
+                checkVariableAssignment((VariableAssignment) child);
+            }
+
+            else if(child instanceof Declaration){
                 checkDeclaration((Declaration) child);
             }
 
-            if(child instanceof VariableAssignment){
-                addVariableToList(child, true);
-            }
-
-            if(child instanceof IfClause){
+            else if(child instanceof IfClause){
                 checkIfClause((IfClause) child);
             }
         }
+
+        exitScope();
     }
 
     private void checkAddOperation(AddOperation node){
+        ExpressionType left = getExpressionType(node.getChildren().get(0));
+        ExpressionType right = getExpressionType(node.getChildren().get(1));
 
-        ArrayList<String> types = new ArrayList<>();
-
-        for (ASTNode child : node.getChildren()) {
-            if(child instanceof VariableReference){
-                checkVariableReference((VariableReference) child);
-            }
-
-            if(!(child instanceof VariableReference))
-                types.add(child.getClass().getSimpleName());
-            else{
-                types.add(checkVariableReferenceType((VariableReference) child));
-            }
+        if(left == ExpressionType.UNDEFINED || right == ExpressionType.UNDEFINED){
+            node.setError("Unknown variable in operation");
+            return;
         }
 
-        for(String type : types){
-            System.out.println(type);
-        }
-
-        if(!Objects.equals(types.get(0), types.get(1))){
+        if(left != right){
             node.setError("Operation variables not of same type!");
+            return;
         }
 
-
-        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+        if(left == ExpressionType.COLOR){
             node.setError("Can't calculate with colors");
         }
     }
 
     private void checkMultiplyOperation(MultiplyOperation node){
-        ArrayList<String> types = new ArrayList<>();
+        ExpressionType left = getExpressionType(node.getChildren().get(0));
+        ExpressionType right = getExpressionType(node.getChildren().get(1));
 
-        for (ASTNode child : node.getChildren()) {
-            if(child instanceof VariableReference){
-                checkVariableReference((VariableReference) child);
-            }
-
-            if(!(child instanceof VariableReference))
-                types.add(child.getClass().getSimpleName());
-            else{
-                types.add(checkVariableReferenceType((VariableReference) child));
-            }
+        if(left == ExpressionType.UNDEFINED || right == ExpressionType.UNDEFINED){
+            node.setError("Unknown variable in operation");
+            return;
         }
 
-        for(String type : types){
-            System.out.println(type);
-        }
-
-        if(!Objects.equals(types.get(0), "ScalarLiteral") && !Objects.equals(types.get(1), "ScalarLiteral")){
-            node.setError("at least one operand needs to be scalar");
-        }
-        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+        if(left == ExpressionType.COLOR || right == ExpressionType.COLOR){
             node.setError("Can't calculate with colors");
+            return;
+        }
+
+        if(left != ExpressionType.SCALAR && right != ExpressionType.SCALAR){
+            node.setError("At least one operand needs to be scalar");
         }
     }
 
     private void checkSubtractOperation(SubtractOperation node){
-        ArrayList<String> types = new ArrayList<>();
+        ExpressionType left = getExpressionType(node.getChildren().get(0));
+        ExpressionType right = getExpressionType(node.getChildren().get(1));
 
-        for (ASTNode child : node.getChildren()) {
-            if(child instanceof VariableReference){
-                checkVariableReference((VariableReference) child);
-            }
-
-            if(!(child instanceof VariableReference))
-                types.add(child.getClass().getSimpleName());
-            else{
-                types.add(checkVariableReferenceType((VariableReference) child));
-            }
+        if(left == ExpressionType.UNDEFINED || right == ExpressionType.UNDEFINED){
+            node.setError("Unknown variable in operation");
+            return;
         }
 
-        for(String type : types){
-            System.out.println(type);
-        }
-
-        if(!Objects.equals(types.get(0), types.get(1))){
+        if(left != right){
             node.setError("Operation variables not of same type!");
+            return;
         }
-        if(Objects.equals(types.get(0), "ColorLiteral") || Objects.equals(types.get(1), "ColorLiteral")){
+
+        if(left == ExpressionType.COLOR){
             node.setError("Can't calculate with colors");
         }
     }
-
-    private String checkVariableReferenceType(VariableReference node){
-        String type = null;
-
-        for(VariableHelper instance: variableHelperList){
-            if(Objects.equals(instance.getName(), node.name)){//de variabele naam vinden in de arraylist, na vinden checken of de types gelijk aan elkaar zijn
-                type = instance.getDatatype();
-            }
-        }
-        return type;
-    }
-
-
-    private void removeLocalVariablesFromList(){
-        variableHelperList.removeIf(variable -> variable.getIsLocal());
-    }
-
 
     private ExpressionType getExpressionType(ASTNode node) {
 
@@ -322,24 +254,7 @@ public class Checker {
             return ExpressionType.BOOL;
 
         if(node instanceof VariableReference) {
-            String type = checkVariableReferenceType((VariableReference) node);
-
-            if(type == null) {
-                return ExpressionType.UNDEFINED;
-            }
-
-            switch(type) {
-                case "PixelLiteral":
-                    return ExpressionType.PIXEL;
-                case "PercentageLiteral":
-                    return ExpressionType.PERCENTAGE;
-                case "ScalarLiteral":
-                    return ExpressionType.SCALAR;
-                case "ColorLiteral":
-                    return ExpressionType.COLOR;
-                case "BoolLiteral":
-                    return ExpressionType.BOOL;
-            }
+            return findVariableType(((VariableReference) node).name);
         }
 
         if(node instanceof AddOperation || node instanceof SubtractOperation) {
@@ -378,6 +293,32 @@ public class Checker {
             }
 
             return left;
+        }
+
+        return ExpressionType.UNDEFINED;
+    }
+
+    private void enterScope() {
+        variableTypes.addFirst(new HashMap<>());
+        scopeDepth++;
+    }
+
+    private void exitScope() {
+        variableTypes.removeFirst();
+        scopeDepth--;
+    }
+
+    private void addVariable(String name, ExpressionType type) {
+        variableTypes.getFirst().put(name, type);
+    }
+
+    private ExpressionType findVariableType(String name) {
+        for (int i = 0; i < scopeDepth; i++) {
+            HashMap<String, ExpressionType> scope = variableTypes.get(i);
+
+            if (scope.containsKey(name)) {
+                return scope.get(name);
+            }
         }
 
         return ExpressionType.UNDEFINED;
