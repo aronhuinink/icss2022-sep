@@ -1,6 +1,7 @@
 package nl.han.ica.icss.transforms;
 
 import nl.han.ica.datastructures.HANLinkedList;
+import nl.han.ica.datastructures.HANQueue;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
@@ -37,16 +38,31 @@ public class Evaluator implements Transform {
     }
 
     private void applyVariableReference(VariableReference variableReference) {
+        
+//        for (ASTNode child : variableReference.getChildren()) {
+//            if (child instanceof AddOperation || child instanceof SubtractOperation || child instanceof MultiplyOperation) {
+//                getLiterals((AddOperation) child);
+//            }
+//
+//        }
+
+        HANQueue queue = new HANQueue();
+        String value;
+
         for (ASTNode child : variableReference.getChildren()) {
-            if (child instanceof AddOperation) {
-                applyAddOperation((AddOperation) child);
+            if(child instanceof AddOperation) {
+                queue.enqueue(applyAddOperation((AddOperation) child));
             }
         }
     }
 
-    private void applyAddOperation(AddOperation child) {
-        var left;
-        var right;
 
+    private int applyAddOperation(AddOperation addOperation) {
+        for (ASTNode child : addOperation.getChildren()) {
+            if (child instanceof ScalarLiteral) {
+                return ((ScalarLiteral) child).value;
+            }
+        }
+        return 0;
     }
 }
