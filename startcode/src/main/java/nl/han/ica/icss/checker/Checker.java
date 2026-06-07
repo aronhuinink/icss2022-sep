@@ -154,36 +154,39 @@ public class Checker {
 
     private void checkIfClause(IfClause node){
         for (ASTNode child : node.getChildren()) {
-            if(child instanceof IfClause){
-                checkIfClause((IfClause) child);
-            }
 
-            else if(child instanceof VariableReference){
-
-
-
+            if(child instanceof VariableReference){
                 checkVariableReference((VariableReference) child);
 
-                for(VariableHelper instance: variableHelperList){
-                    if(Objects.equals(instance.getName(), ((VariableReference) child).name)){
-                        if(Objects.equals(instance.getDatatype(), "BoolLiteral")) return;
-                    }
-
+                ExpressionType type = getExpressionType(child);
+                if(type != ExpressionType.BOOL){
+                    child.setError("If clause variable not boolean");
                 }
-                child.setError("If clause variable not boolean");
-
-            }
-            else if(child instanceof ColorLiteral || child instanceof PercentageLiteral || child instanceof PixelLiteral || child instanceof ScalarLiteral){
-                child.setError("If clause variable not boolean");//WHOOOPS blijkbaar niet nodig fack it te lui om te verwijderen
             }
 
-             if(child instanceof Declaration){
+            else if(child instanceof BoolLiteral){
+                // mag dus niks doen
+            }
+
+            else if(child instanceof ColorLiteral
+                    || child instanceof PercentageLiteral
+                    || child instanceof PixelLiteral
+                    || child instanceof ScalarLiteral){
+                child.setError("If clause expression not boolean");
+            }
+
+            else if(child instanceof Declaration){
                 checkDeclaration((Declaration) child);
             }
 
+            else if(child instanceof VariableAssignment){
+                addVariableToList(child, true);
+            }
 
+            else if(child instanceof IfClause){
+                checkIfClause((IfClause) child);
+            }
         }
-
     }
 
     private void checkAddOperation(AddOperation node){
