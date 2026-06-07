@@ -45,6 +45,8 @@ public class Evaluator implements Transform {
     }
 
     private void applyAddOperation(AddOperation child) {
+        var left;
+        var right;
 
     }
 }
