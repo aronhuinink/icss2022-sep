@@ -41,9 +41,12 @@ public class Evaluator implements Transform {
         if (assignment.expression instanceof AddOperation) {
             assignment.expression = applyAddOperation((AddOperation) assignment.expression);
         }
+
     }
 
     private Literal applyAddOperation(AddOperation addOperation) {
+        //ervanuitgaand dat de juiste waarden doorkomen i.e. de parser zorgt er twee px, percentages of pixelwaarde is
+
         if (addOperation.lhs instanceof ScalarLiteral
                 && addOperation.rhs instanceof ScalarLiteral) {
 
@@ -52,7 +55,23 @@ public class Evaluator implements Transform {
 
             return new ScalarLiteral(left.value + right.value);
         }
+        //percentage and percentage
+        else if(addOperation.lhs instanceof PercentageLiteral && addOperation.rhs instanceof PercentageLiteral) {
+            PercentageLiteral left = (PercentageLiteral) addOperation.lhs;
+            PercentageLiteral right = (PercentageLiteral) addOperation.rhs;
 
-        throw new RuntimeException("Deze AddOperation kan nog niet geëvalueerd worden.");
+            return new PercentageLiteral(left.value + right.value);
+        }
+
+        //px en px
+        else if(addOperation.lhs instanceof PixelLiteral && addOperation.rhs instanceof PixelLiteral) {
+            PixelLiteral left = (PixelLiteral) addOperation.lhs;
+            PixelLiteral right = (PixelLiteral) addOperation.rhs;
+
+            return new PixelLiteral(left.value + right.value);
+        }
+
+
+        throw new RuntimeException("Error, parser let through code it shouldn't");
     }
 }
