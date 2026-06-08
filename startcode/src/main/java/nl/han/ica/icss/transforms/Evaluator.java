@@ -44,8 +44,46 @@ public class Evaluator implements Transform {
         else if (assignment.expression instanceof SubtractOperation) {
             assignment.expression = applySubtractOperation((SubtractOperation) assignment.expression);
         }
+        else if (assignment.expression instanceof MultiplyOperation) {
+            assignment.expression = applyMultiplyOperation((MultiplyOperation) assignment.expression);
+        }
 
 
+    }
+
+    private Expression applyMultiplyOperation(MultiplyOperation multiplyOperation) {
+        if(multiplyOperation.lhs instanceof ScalarLiteral && multiplyOperation.rhs instanceof ScalarLiteral) {
+            ScalarLiteral left = (ScalarLiteral) multiplyOperation.lhs;
+            ScalarLiteral right = (ScalarLiteral) multiplyOperation.rhs;
+
+            return new ScalarLiteral(left.value * right.value);
+        }
+        else if(multiplyOperation.lhs instanceof PercentageLiteral) {
+            PercentageLiteral left = (PercentageLiteral) multiplyOperation.lhs;
+            ScalarLiteral right = (ScalarLiteral) multiplyOperation.rhs;
+
+            return new ScalarLiteral(left.value/100 * right.value);
+        }
+        else if(multiplyOperation.rhs instanceof PercentageLiteral) {
+            ScalarLiteral left = (ScalarLiteral) multiplyOperation.lhs;
+            PercentageLiteral right = (PercentageLiteral) multiplyOperation.rhs;
+
+            return new ScalarLiteral(left.value * right.value/100);
+        }
+        else if (multiplyOperation.lhs instanceof PixelLiteral){
+            PixelLiteral left = (PixelLiteral) multiplyOperation.lhs;
+            ScalarLiteral right = (ScalarLiteral) multiplyOperation.rhs;
+
+            return new PixelLiteral(left.value * right.value);
+        }
+        else if(multiplyOperation.rhs instanceof PixelLiteral) {
+            ScalarLiteral left = (ScalarLiteral) multiplyOperation.lhs;
+            PixelLiteral right = (PixelLiteral) multiplyOperation.rhs;
+
+            return new PixelLiteral(left.value * right.value);
+        }
+
+        throw new RuntimeException("Error, parser let through code it shouldn't");
     }
 
     //bijna dublicate aan addOperation
