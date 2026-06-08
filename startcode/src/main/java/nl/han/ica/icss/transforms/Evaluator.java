@@ -31,38 +31,28 @@ public class Evaluator implements Transform {
 
     private void applyStylesheet(Stylesheet stylesheet) {
         for (ASTNode child : stylesheet.getChildren()) {
-            if (child instanceof VariableReference) {
-                applyVariableReference((VariableReference) child);
+            if (child instanceof VariableAssignment) {
+                applyVariableAssignment((VariableAssignment) child);
             }
         }
     }
 
-    private void applyVariableReference(VariableReference variableReference) {
-        
-//        for (ASTNode child : variableReference.getChildren()) {
-//            if (child instanceof AddOperation || child instanceof SubtractOperation || child instanceof MultiplyOperation) {
-//                getLiterals((AddOperation) child);
-//            }
-//
-//        }
-
-        HANQueue queue = new HANQueue();
-        String value;
-
-        for (ASTNode child : variableReference.getChildren()) {
-            if(child instanceof AddOperation) {
-                queue.enqueue(applyAddOperation((AddOperation) child));
-            }
+    private void applyVariableAssignment(VariableAssignment assignment) {
+        if (assignment.expression instanceof AddOperation) {
+            assignment.expression = applyAddOperation((AddOperation) assignment.expression);
         }
     }
 
+    private Literal applyAddOperation(AddOperation addOperation) {
+        if (addOperation.lhs instanceof ScalarLiteral
+                && addOperation.rhs instanceof ScalarLiteral) {
 
-    private int applyAddOperation(AddOperation addOperation) {
-        for (ASTNode child : addOperation.getChildren()) {
-            if (child instanceof ScalarLiteral) {
-                return ((ScalarLiteral) child).value;
-            }
+            ScalarLiteral left = (ScalarLiteral) addOperation.lhs;
+            ScalarLiteral right = (ScalarLiteral) addOperation.rhs;
+
+            return new ScalarLiteral(left.value + right.value);
         }
-        return 0;
+
+        throw new RuntimeException("Deze AddOperation kan nog niet geëvalueerd worden.");
     }
 }
