@@ -99,14 +99,12 @@ public class HANLinkedList<T> implements IHANLinkedList<T> {
 
     @Override
     public int getSize() {
-        if (front == null) {
-            return 0;
-        }
         int size = 0;
         Node<T> current = front;
-        while (front.next != null) {
-            current = current.next;
+
+        while (current != null) {
             size++;
+            current = current.next;
         }
 
         return size;
