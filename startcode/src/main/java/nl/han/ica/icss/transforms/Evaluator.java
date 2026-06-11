@@ -48,8 +48,8 @@ public class Evaluator implements Transform {
     }
 
     private void applyIfClause(IfClause child) {
-        System.out.println(child.getConditionalExpression());
-        System.out.println(child.getConditionalExpression().equals(Boolean.TRUE));
+//        System.out.println(child.getConditionalExpression());
+//        System.out.println(child.getConditionalExpression().equals(Boolean.TRUE));
 
     }
 
@@ -72,8 +72,14 @@ public class Evaluator implements Transform {
                 values.addFirst(map);
 
                 for (int i = 0; i < values.getSize(); i++) {
-                    System.out.println(values.get(i));
+                    HashMap<String, Literal> mapDebug = values.get(i);
 
+                    for (String key : mapDebug.keySet()) {
+                        Literal literal = mapDebug.get(key);
+
+                        System.out.println("String: " + key);
+                        System.out.println("Literal: " + literal);
+                    }
                 }
             }
         }
