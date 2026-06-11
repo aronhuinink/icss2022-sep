@@ -1,9 +1,9 @@
 package nl.han.ica.icss.transforms;
 
 import nl.han.ica.datastructures.HANLinkedList;
-import nl.han.ica.datastructures.HANQueue;
 import nl.han.ica.datastructures.IHANLinkedList;
 import nl.han.ica.icss.ast.*;
+import nl.han.ica.icss.ast.literals.BoolLiteral;
 import nl.han.ica.icss.ast.literals.PercentageLiteral;
 import nl.han.ica.icss.ast.literals.PixelLiteral;
 import nl.han.ica.icss.ast.literals.ScalarLiteral;
@@ -12,19 +12,18 @@ import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 public class Evaluator implements Transform {
 
-    private IHANLinkedList<HashMap<String, Literal>> variableValues;
+    private IHANLinkedList<HashMap<String, Literal>> values;
 
     public Evaluator() {
-        variableValues = new HANLinkedList<>();
+        values = new HANLinkedList<>();
     }
 
     @Override
     public void apply(AST ast) {
-        variableValues = new HANLinkedList<>();
+        values = new HANLinkedList<>();
 
         applyStylesheet(ast.root);
     }
@@ -34,7 +33,24 @@ public class Evaluator implements Transform {
             if (child instanceof VariableAssignment) {
                 applyVariableAssignment((VariableAssignment) child);
             }
+            else if(child instanceof Stylerule){
+                applyStylerule((Stylerule) child);
+            }
         }
+    }
+
+    private void applyStylerule(Stylerule stylerule) {
+        for (ASTNode child : stylerule.getChildren()) {
+            if(child instanceof IfClause){
+                applyIfClause((IfClause) child);
+            }
+        }
+    }
+
+    private void applyIfClause(IfClause child) {
+        System.out.println(child.getConditionalExpression());
+        System.out.println(child.getConditionalExpression().equals(Boolean.TRUE));
+
     }
 
     private void applyVariableAssignment(VariableAssignment assignment) {
@@ -48,7 +64,19 @@ public class Evaluator implements Transform {
             assignment.expression = applyMultiplyOperation((MultiplyOperation) assignment.expression);
         }
 
+        for (ASTNode child : assignment.getChildren()) {
+            if(!(child instanceof VariableReference)) {
+                HashMap<String, Literal> map = new HashMap<>();
+                map.put(assignment.name.name, (Literal) child);
 
+                values.addFirst(map);
+
+                for (int i = 0; i < values.getSize(); i++) {
+                    System.out.println(values.get(i));
+
+                }
+            }
+        }
     }
 
     private Expression applyMultiplyOperation(MultiplyOperation multiplyOperation) {
@@ -149,3 +177,19 @@ public class Evaluator implements Transform {
         throw new RuntimeException("Error, parser let through code it shouldn't");
     }
 }
+
+
+//TODO maak een hashmap om de data op te slaan
+/*
+
+
+AdjustColor := TRUE;
+
+
+p {
+	if[AdjustColor] {
+	    color: #124532;
+	}
+	height: 20px;
+}
+ */
