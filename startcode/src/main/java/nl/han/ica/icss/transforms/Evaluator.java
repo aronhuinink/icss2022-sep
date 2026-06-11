@@ -65,9 +65,9 @@ public class Evaluator implements Transform {
         }
 
         for (ASTNode child : assignment.getChildren()) {
-            if(!(child instanceof VariableReference)) {
+            if(child instanceof BoolLiteral) {
                 HashMap<String, Literal> map = new HashMap<>();
-                map.put(assignment.name.name, (Literal) child);
+                map.put(assignment.name.name,(BoolLiteral) child);
 
                 values.addFirst(map);
 
@@ -75,10 +75,10 @@ public class Evaluator implements Transform {
                     HashMap<String, Literal> mapDebug = values.get(i);
 
                     for (String key : mapDebug.keySet()) {
-                        Literal literal = mapDebug.get(key);
+                        BoolLiteral literal = mapDebug.get(key);
 
                         System.out.println("String: " + key);
-                        System.out.println("Literal: " + literal);
+                        System.out.println("Literal: " +  literal.value);
                     }
                 }
             }
