@@ -41,7 +41,7 @@ public class Evaluator implements Transform {
 
     private void applyStylerule(Stylerule stylerule) {
         for (ASTNode child : stylerule.getChildren()) {
-            if(child instanceof IfClause && IsIfClauseTrue()){
+            if(child instanceof IfClause && IsIfClauseTrue((IfClause) child)) {
                 System.out.println("if clause true");
             }
             else if(child instanceof ElseClause){
@@ -50,11 +50,23 @@ public class Evaluator implements Transform {
         }
     }
 
-    private boolean IsIfClauseTrue() {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
+    private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
+
+        String variableNameToCheck = "";
+
+        for (ASTNode child : ifClause.getChildren()) {
+            if(child instanceof VariableReference) {
+                variableNameToCheck = ((VariableReference)child).name;
+            }
+        }
+
         for (int i = 0; i < values.getSize(); i++) {
             HashMap<String, Literal> map = values.get(i);
 
-            if(map.get("AdjustColor") != null) return true;
+
+            if(map.get(variableNameToCheck) != null ){
+                if(((BoolLiteral) map.get(variableNameToCheck)).value) return true;
+            }
         }
         return false;
     }
