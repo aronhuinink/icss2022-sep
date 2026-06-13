@@ -40,18 +40,16 @@ public class Evaluator implements Transform {
         }
     }
 
-    private ArrayList<ASTNode> applyStylerule(Stylerule stylerule) {
+    private void applyStylerule(Stylerule stylerule) {
         for (ASTNode child : stylerule.getChildren()) {
             if(child instanceof IfClause && IsIfClauseTrue((IfClause) child)) {
                 System.out.println("if clause true");
-                return ((IfClause)child).body;
+                stylerule.body = ((IfClause)child).body;
             }
             else if(child instanceof ElseClause){
-                return ((ElseClause)child).body;
+                stylerule.body =  ((ElseClause)child).body;
             }
-            return child.getChildren();
         }
-        return null;
     }
 
     private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
