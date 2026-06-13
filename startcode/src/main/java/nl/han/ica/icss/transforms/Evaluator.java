@@ -11,6 +11,7 @@ import nl.han.ica.icss.ast.operations.AddOperation;
 import nl.han.ica.icss.ast.operations.MultiplyOperation;
 import nl.han.ica.icss.ast.operations.SubtractOperation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Evaluator implements Transform {
@@ -39,15 +40,18 @@ public class Evaluator implements Transform {
         }
     }
 
-    private void applyStylerule(Stylerule stylerule) {
+    private ArrayList<ASTNode> applyStylerule(Stylerule stylerule) {
         for (ASTNode child : stylerule.getChildren()) {
             if(child instanceof IfClause && IsIfClauseTrue((IfClause) child)) {
                 System.out.println("if clause true");
+                return ((IfClause)child).body;
             }
             else if(child instanceof ElseClause){
-                System.out.println("if clause false");
+                return ((ElseClause)child).body;
             }
+            return child.getChildren();
         }
+        return null;
     }
 
     private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
