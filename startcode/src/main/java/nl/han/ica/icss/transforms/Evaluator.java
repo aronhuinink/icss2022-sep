@@ -42,16 +42,18 @@ public class Evaluator implements Transform {
 
     private void applyStylerule(Stylerule stylerule) {
         ArrayList<ASTNode> newChildren = new ArrayList<>();
-        ArrayList<ASTNode> clauseBody = new ArrayList<>();
+
         for (ASTNode child : stylerule.getChildren()) {
 
-            if(isIfClauseTrue((IfClause) child)){
+            if(child instanceof IfClause && isIfClauseTrue((IfClause) child)) {
                 System.out.println("if clause true");
-                newChildren = ((IfClause)child).body;
+                newChildren.add(((IfClause)child).body);
+            }
+            else if(child instanceof ElseClause){
+                newChildren.add((ElseClause)child).body;
             }
             else{
-                System.out.println("else clause false");
-                newChildren = ((ElseClause)child).body;
+                newChildren.add(child);
             }
         }
         stylerule.body = newChildren;
