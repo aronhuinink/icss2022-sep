@@ -41,21 +41,24 @@ public class Evaluator implements Transform {
 
     private void applyStylerule(Stylerule stylerule) {
         for (ASTNode child : stylerule.getChildren()) {
-            if(child instanceof IfClause){
-                applyIfClause((IfClause) child);
+            if(child instanceof IfClause && IsIfClauseTrue()){
+                System.out.println("if clause true");
             }
             else if(child instanceof ElseClause){
-
+                System.out.println("if clause false");
             }
         }
     }
 
-    private void applyIfClause(IfClause child) {
-//        System.out.println(child.getConditionalExpression());
-//        System.out.println(child.getConditionalExpression().equals(Boolean.TRUE));
+    private boolean IsIfClauseTrue() {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
+        for (int i = 0; i < values.getSize(); i++) {
+            HashMap<String, Literal> map = values.get(i);
 
-
+            if(map.get("AdjustColor") != null) return true;
+        }
+        return false;
     }
+
 
     private void applyVariableAssignment(VariableAssignment assignment) {
         if (assignment.expression instanceof AddOperation) {
