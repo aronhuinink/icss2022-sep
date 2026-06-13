@@ -44,6 +44,9 @@ public class Evaluator implements Transform {
             if(child instanceof IfClause){
                 applyIfClause((IfClause) child);
             }
+            else if(child instanceof ElseClause){
+
+            }
         }
     }
 
@@ -51,38 +54,28 @@ public class Evaluator implements Transform {
 //        System.out.println(child.getConditionalExpression());
 //        System.out.println(child.getConditionalExpression().equals(Boolean.TRUE));
 
+
     }
 
     private void applyVariableAssignment(VariableAssignment assignment) {
         if (assignment.expression instanceof AddOperation) {
             assignment.expression = applyAddOperation((AddOperation) assignment.expression);
-        }
-        else if (assignment.expression instanceof SubtractOperation) {
+        } else if (assignment.expression instanceof SubtractOperation) {
             assignment.expression = applySubtractOperation((SubtractOperation) assignment.expression);
-        }
-        else if (assignment.expression instanceof MultiplyOperation) {
+        } else if (assignment.expression instanceof MultiplyOperation) {
             assignment.expression = applyMultiplyOperation((MultiplyOperation) assignment.expression);
         }
 
-        for (ASTNode child : assignment.getChildren()) {
-            if(child instanceof BoolLiteral) {
-                HashMap<String, Literal> map = new HashMap<>();
-                map.put(assignment.name.name,(BoolLiteral) child);
+        if (assignment.expression instanceof BoolLiteral) {
+            BoolLiteral boolLiteral = (BoolLiteral) assignment.expression;
 
-                values.addFirst(map);
+            HashMap<String, Literal> map = new HashMap<>();
+            map.put(assignment.name.name, boolLiteral);
 
-                for (int i = 0; i < values.getSize(); i++) {
-                    HashMap<String, Literal> mapDebug = values.get(i);
-
-                    for (String key : mapDebug.keySet()) {
-                        BoolLiteral literal = mapDebug.get(key);
-
-                        System.out.println("String: " + key);
-                        System.out.println("Literal: " +  literal.value);
-                    }
-                }
-            }
+            values.addFirst(map);
         }
+
+        printValuesDebug();
     }
 
     private Expression applyMultiplyOperation(MultiplyOperation multiplyOperation) {
@@ -181,6 +174,22 @@ public class Evaluator implements Transform {
 
 
         throw new RuntimeException("Error, parser let through code it shouldn't");
+    }
+    private void printValuesDebug() {
+        for (int i = 0; i < values.getSize(); i++) {
+            HashMap<String, Literal> mapDebug = values.get(i);
+
+            for (String key : mapDebug.keySet()) {
+                Literal literal = mapDebug.get(key);
+
+                if (literal instanceof BoolLiteral) {
+                    BoolLiteral boolLiteral = (BoolLiteral) literal;
+
+                    System.out.println("String: " + key);
+                    System.out.println("Literal: " + (boolLiteral.value ? "TRUE" : "FALSE"));
+                }
+            }
+        }
     }
 }
 
