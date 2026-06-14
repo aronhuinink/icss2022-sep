@@ -41,15 +41,46 @@ public class Evaluator implements Transform {
     }
 
     private void applyStylerule(Stylerule stylerule) {
-        for (ASTNode child : stylerule.getChildren()) {
-            if(child instanceof IfClause && IsIfClauseTrue((IfClause) child)) {
-                System.out.println("if clause true");
-                stylerule.body = ((IfClause)child).body;
-            }
-            else if(child instanceof ElseClause){
-                stylerule.body =  ((ElseClause)child).body;
+        ArrayList<ASTNode> newBody = new ArrayList<>();
+
+        for (int i = 0; i < stylerule.body.size(); i++) {
+            ASTNode child = stylerule.body.get(i);
+
+            if (child instanceof IfClause) {
+                IfClause ifClause = (IfClause) child;
+
+                if (IsIfClauseTrue(ifClause)) {
+                    System.out.println("if clause true");
+
+                    // Vervang de IfClause door de inhoud van de if-body
+                    newBody.addAll(ifClause.body);
+
+                    // Als er direct een else na komt, overslaan
+                    if (i + 1 < stylerule.body.size()
+                            && stylerule.body.get(i + 1) instanceof ElseClause) {
+                        i++;
+                    }
+                } else {
+                    // If is false, gebruik eventueel de else-body
+                    if (i + 1 < stylerule.body.size()
+                            && stylerule.body.get(i + 1) instanceof ElseClause) {
+                        ElseClause elseClause = (ElseClause) stylerule.body.get(i + 1);
+
+                        newBody.addAll(elseClause.body);
+
+                        // Else is verwerkt, dus overslaan
+                        i++;
+                    }
+                }
+            } else if (child instanceof ElseClause) {
+                // Losse else overslaan
+            } else {
+                // Normale code onder/boven de if behouden
+                newBody.add(child);
             }
         }
+
+        stylerule.body = newBody;
     }
 
     private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
