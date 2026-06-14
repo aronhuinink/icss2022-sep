@@ -41,23 +41,18 @@ public class Evaluator implements Transform {
     }
 
     private void applyStylerule(Stylerule stylerule) {
-        ArrayList<ASTNode> newChildren = new ArrayList<>();
-        ArrayList<ASTNode> clauseBody = new ArrayList<>();
         for (ASTNode child : stylerule.getChildren()) {
-
-            if(isIfClauseTrue((IfClause) child)){
+            if(child instanceof IfClause && IsIfClauseTrue((IfClause) child)) {
                 System.out.println("if clause true");
-                newChildren = ((IfClause)child).body;
+                stylerule.body = ((IfClause)child).body;
             }
-            else{
-                System.out.println("else clause false");
-                newChildren = ((ElseClause)child).body;
+            else if(child instanceof ElseClause){
+                stylerule.body =  ((ElseClause)child).body;
             }
         }
-        stylerule.body = newChildren;
     }
 
-    private boolean isIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
+    private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
 
         String variableNameToCheck = "";
 
