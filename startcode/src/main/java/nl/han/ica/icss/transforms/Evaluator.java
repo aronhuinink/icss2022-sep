@@ -52,8 +52,8 @@ public class Evaluator implements Transform {
                 if (IsIfClauseTrue(ifClause)) {
                     System.out.println("if clause true");
 
-                    // Vervang de IfClause door de inhoud van de if-body
-                    newBody.addAll(ifClause.body);
+                    // IfClause vervangen door verwerkte inhoud van de if-body
+                    newBody.addAll(applyBody(ifClause.body));
 
                     // Als er direct een else na komt, overslaan
                     if (i + 1 < stylerule.body.size()
@@ -61,26 +61,64 @@ public class Evaluator implements Transform {
                         i++;
                     }
                 } else {
-                    // If is false, gebruik eventueel de else-body
+                    // If is false, check of er een else direct achter staat
                     if (i + 1 < stylerule.body.size()
                             && stylerule.body.get(i + 1) instanceof ElseClause) {
                         ElseClause elseClause = (ElseClause) stylerule.body.get(i + 1);
 
-                        newBody.addAll(elseClause.body);
+                        // ElseClause vervangen door verwerkte inhoud van de else-body
+                        newBody.addAll(applyBody(elseClause.body));
 
-                        // Else is verwerkt, dus overslaan
+                        // ElseClause is verwerkt, dus overslaan
                         i++;
                     }
                 }
             } else if (child instanceof ElseClause) {
                 // Losse else overslaan
+                // Die hoort alleen verwerkt te worden samen met de vorige if
+            } else if (child instanceof Declaration) {
+                // Declaration buiten if/else verwerken
+                newBody.add(applyDeclaration((Declaration) child));
             } else {
-                // Normale code onder/boven de if behouden
+                // Andere nodes behouden
                 newBody.add(child);
             }
         }
 
         stylerule.body = newBody;
+    }
+
+    private ArrayList<ASTNode> applyBody(ArrayList<ASTNode> body) {
+        ArrayList<ASTNode> newBody = new ArrayList<>();
+
+        for (ASTNode child : body) {
+            if (child instanceof Declaration) {
+                newBody.add(applyDeclaration((Declaration) child));
+            } else if (child instanceof IfClause) {
+                IfClause ifClause = (IfClause) child;
+
+                if (IsIfClauseTrue(ifClause)) {
+                    newBody.addAll(applyBody(ifClause.body));
+                }
+            } else if (child instanceof ElseClause) {
+                // Losse else overslaan
+            } else {
+                newBody.add(child);
+            }
+        }
+
+        return newBody;
+    }
+
+    private ASTNode applyDeclaration(Declaration declaration) {
+        if (declaration.expression instanceof AddOperation) {
+            declaration.expression = applyAddOperation((AddOperation) declaration.expression);
+        } else if (declaration.expression instanceof SubtractOperation) {
+            declaration.expression = applySubtractOperation((SubtractOperation) declaration.expression);
+        } else if (declaration.expression instanceof MultiplyOperation) {
+            declaration.expression = applyMultiplyOperation((MultiplyOperation) declaration.expression);
+        }
+        return declaration;
     }
 
     private boolean IsIfClauseTrue(IfClause ifClause) {//door de linkedlist gaan om op te zoeken zodat je uitvindt of hij bestaat.
